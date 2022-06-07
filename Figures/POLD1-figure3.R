@@ -299,10 +299,7 @@ p2<-(ggplot(qq.out, aes( x= x, y = y))
      + theme(axis.text=element_text(size=7),axis.title=element_text(size=6),legend.text=element_text(size=6)))
 
 
-#setwd("D:/Lab/cancer/Article_PolD_family/suppl_plots")
-#jpeg(filename=paste("Suppl_Figure2_PC2_germline_normal_trios_vs_simuations.jpeg", sep=""), width=10, height=4, res=300, units='in')
-#grid.arrange(p1,p2,nrow=1)
-#dev.off()
+
 
 setwd("D:/Lab/cancer/Article_PolD_family/plots")
 jpeg(filename=paste("Figure3H_simuations_norm_vs_simulations_pold_pca_6000trios.tiff", sep=""), width=9, height=9, res=300, units='cm')
