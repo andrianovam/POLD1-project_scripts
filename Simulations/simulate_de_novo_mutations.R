@@ -6,7 +6,7 @@ library(ref_genome, character.only = TRUE)
 
 setwd(dirname(this.path()))
 
-percent_of_pold_samples = 0.05 
+percent_of_pold_samples = 0 
 n_simulations_per_family = 1
 
 #### create spectrum of de novo mutations in offspring of fathers with POLD1 L474P variant###
