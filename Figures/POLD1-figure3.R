@@ -76,7 +76,7 @@ data2 <- result %>% filter(Set =='Add')
 our <- result %>% filter(POLD!='Published trios'&Set=='Main')
 public <- result %>% filter(POLD =='Published trios'&Set=='Main')
 
-tiff(filename="Output_plots/Figure3C_germline_4contexts_prop.tiff", width=8, height=8, res=300, units='cm')
+tiff(filename="Output_plots/Figure3b_germline_4contexts_prop.tiff", width=8, height=8, res=300, units='cm')
 (ggplot()
   + geom_violin(data = data1, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion, fill=POLD), alpha=0.6)
   + geom_jitter(data = public, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion), size=0.05, alpha=0.3)
@@ -302,7 +302,7 @@ p2<-(ggplot(qq.out, aes( x= x, y = y))
 
 
 setwd("D:/Lab/cancer/Article_PolD_family/plots")
-jpeg(filename=paste("Figure3H_simuations_norm_vs_simulations_pold_pca_6000trios.tiff", sep=""), width=9, height=9, res=300, units='cm')
+jpeg(filename=paste("Figure3h_simuations_norm_vs_simulations_pold_pca_6000trios.tiff", sep=""), width=9, height=9, res=300, units='cm')
 p1 + annotation_custom(ggplotGrob(p2), xmin = 0.05, xmax = 0.7, ymin = 1.15, ymax = 4)
 dev.off()
 
