@@ -1,0 +1,4 @@
+Script 'simulations_one_offspring.R' simulates synthetic dataset of de novo mutations. It takes the dataset with de novo mutations from public trios (wt dataset) and also the dataset of de novo mutations in the offspring of fathers with *POLD1* L474P variant from the current study (pold dataset). 
+It generates de novo mutations for the number of families equal to those in wt dataset. It samples mutations in this synthetic dataset according to their frequency in the wt de novo spectrum or pold de novo spectrum.
+The proportion of samples corresponding to the pold de novo spectrum can be changes using 'percent_of_pold_samples' variable (initially percent_of_pold_samples = 0).
+Number of offspring generated per family can also be changed using 'n_simulations_per_family' variable (initially n_simulations_per_family=1)
