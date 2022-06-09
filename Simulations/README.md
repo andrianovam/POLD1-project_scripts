@@ -1,4 +1,5 @@
 <b>'simulate_de_novo_mutations.R' </b>
+
 Script 'simulate_de_novo_mutations.R' generates synthetic dataset of de novo mutations based on the mutational spectrum. 
 
 It takes the dataset with de novo mutations from public trios (wt dataset) and also the dataset of de novo mutations in the offspring of fathers with *POLD1* L474P variant from the current study (pold dataset). It calculates the 96-context mutational spectra for both datasets summarizing mutations by all available samples.
