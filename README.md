@@ -1,4 +1,4 @@
-# POLD1-project_scripts
+# *POLD1* project 
 Code accompanying "Extended family with germline pathogenic variant in polymerase delta provides strong evidence for recessive effect of proofreading inactivation" (ref)
 
 # Figures
