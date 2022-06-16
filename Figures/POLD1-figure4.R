@@ -48,7 +48,7 @@ tiff(filename="Output_plots/Figure4a_Mutability_of_different_ucec_tcga_wes.tiff"
   + theme(legend.margin =margin(r=10,l=5,t=0,b=0))
   + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10))
   + theme(axis.text.y = element_markdown())
-  + scale_y_discrete(expand = expansion(mult = c(0, 0.3)), labels=c("POLD1" = "*POLD1exo-*", "POLE" = "*POLEexo-*", "PolE_MSI-H" = "MMRd *POLEexo-*", "PolD_MSI-H" = "MMRd *POLD1exo-*", "MSI" = "MMRd", "PolE_MSS" = "*POLEexo-*", "MSS"="MMR proficient<br>pols proficient")))
+  + scale_y_discrete(expand = expansion(mult = c(0, 0.3)), labels=c("POLD1" = "*POLD1exo-*", "POLE" = "*POLEexo-*", "PolE_MSI-H" = "MMRd *POLEexo-*", "PolD_MSI-H" = "MMRd *POLD1exo-*", "MSI" = "MMRd", "PolE_MSS" = "*POLEexo-*", "MSS"="MMR proficiency<br>proofread proficiency")))
 
 dev.off()
 
