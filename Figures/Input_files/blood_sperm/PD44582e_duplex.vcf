@@ -1,0 +1,480 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=FAIL,Description="Fail the site if all alleles fail but for different reasons.">
+##FILTER=<ID=PASS,Description="Site contains at least one allele that passes filters">
+##FILTER=<ID=base_qual,Description="alt median base quality">
+##FILTER=<ID=clustered_events,Description="Clustered events observed in the tumor">
+##FILTER=<ID=contamination,Description="contamination">
+##FILTER=<ID=duplicate,Description="evidence for alt allele is overrepresented by apparent duplicates">
+##FILTER=<ID=fragment,Description="abs(ref - alt) median fragment length">
+##FILTER=<ID=germline,Description="Evidence indicates this site is germline, not somatic">
+##FILTER=<ID=haplotype,Description="Variant near filtered variant on same haplotype.">
+##FILTER=<ID=low_allele_frac,Description="Allele fraction is below specified threshold">
+##FILTER=<ID=map_qual,Description="ref - alt median mapping quality">
+##FILTER=<ID=multiallelic,Description="Site filtered because too many alt alleles pass tumor LOD">
+##FILTER=<ID=n_ratio,Description="Ratio of N to alt exceeds specified ratio">
+##FILTER=<ID=normal_artifact,Description="artifact_in_normal">
+##FILTER=<ID=orientation,Description="orientation bias detected by the orientation bias mixture model">
+##FILTER=<ID=panel_of_normals,Description="Blacklisted site in panel of normals">
+##FILTER=<ID=position,Description="median distance of alt variants from end of reads">
+##FILTER=<ID=possible_numt,Description="Allele depth is below expected coverage of NuMT in autosome">
+##FILTER=<ID=slippage,Description="Site filtered due to contraction of short tandem repeat region">
+##FILTER=<ID=strand_bias,Description="Evidence for alt allele comes from one read direction only">
+##FILTER=<ID=strict_strand,Description="Evidence for alt allele is not represented in both directions">
+##FILTER=<ID=weak_evidence,Description="Mutation does not meet likelihood threshold">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=AF,Number=A,Type=Float,Description="Allele fractions of alternate alleles in the tumor">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth (reads with MQ=255 or with bad mates are filtered)">
+##FORMAT=<ID=F1R2,Number=R,Type=Integer,Description="Count of reads in F1R2 pair orientation supporting each allele">
+##FORMAT=<ID=F2R1,Number=R,Type=Integer,Description="Count of reads in F2R1 pair orientation supporting each allele">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=PGT,Number=1,Type=String,Description="Physical phasing haplotype information, describing how the alternate alleles are phased in relation to one another; will always be heterozygous and is not intended to describe called alleles">
+##FORMAT=<ID=PID,Number=1,Type=String,Description="Physical phasing ID information, where each unique ID within a given sample (but not across samples) connects records within a phasing group">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized, Phred-scaled likelihoods for genotypes as defined in the VCF specification">
+##FORMAT=<ID=PS,Number=1,Type=Integer,Description="Phasing set (typically the position of the first variant in the set)">
+##FORMAT=<ID=SB,Number=4,Type=Integer,Description="Per-sample component statistics which comprise the Fisher's Exact Test to detect strand bias.">
+##GATKCommandLine=<ID=FilterMutectCalls,CommandLine="FilterMutectCalls --output /gss/andrianovama/POLD1/second_raund/12_Mutect/results_our_PON_with_fibro/ARGL_F3/ARGL_F3.chr20.somatic.filtered.vcf --variant /gss/andrianovama/POLD1/second_raund/12_Mutect/results_our_PON_with_fibro/ARGL_F3/ARGL_F3.chr20.somatic.vcf --intervals chr20 --reference /home/andrianovama/POLD1/second_raund/0_Reference/ucsc.hg19.fasta --threshold-strategy OPTIMAL_F_SCORE --f-score-beta 1.0 --false-discovery-rate 0.05 --initial-threshold 0.1 --mitochondria-mode false --max-events-in-region 2 --max-alt-allele-count 1 --unique-alt-read-count 0 --min-median-mapping-quality 30 --min-median-base-quality 20 --max-median-fragment-length-difference 10000 --min-median-read-position 1 --max-n-ratio Infinity --min-reads-per-strand 0 --min-allele-fraction 0.0 --contamination-estimate 0.0 --log-snv-prior -13.815510557964275 --log-indel-prior -16.11809565095832 --log-artifact-prior -2.302585092994046 --normal-p-value-threshold 0.001 --min-slippage-length 8 --pcr-slippage-rate 0.1 --distance-on-haplotype 100 --long-indel-length 5 --interval-set-rule UNION --interval-padding 0 --interval-exclusion-padding 0 --interval-merging-rule ALL --read-validation-stringency SILENT --seconds-between-progress-updates 10.0 --disable-sequence-dictionary-validation false --create-output-bam-index true --create-output-bam-md5 false --create-output-variant-index true --create-output-variant-md5 false --lenient false --add-output-sam-program-record true --add-output-vcf-command-line true --cloud-prefetch-buffer 40 --cloud-index-prefetch-buffer -1 --disable-bam-index-caching false --sites-only-vcf-output false --help false --version false --showHidden false --verbosity INFO --QUIET false --use-jdk-deflater false --use-jdk-inflater false --gcs-max-retries 20 --gcs-project-for-requester-pays  --disable-tool-default-read-filters false",Version="4.1.8.1",Date="May 19, 2021 2:29:40 PM MSK">
+##GATKCommandLine=<ID=SelectVariants,CommandLine="SelectVariants --output /gss/andrianovama/POLD1/second_raund/12_Mutect/results_our_PON_with_fibro/ARGL_F3/ARGL_F3.chr20.somatic.selected.SNP.vcf --sample-name ARGL_F2_v2 --sample-name ARGL_F3 --exclude-filtered true --select-type-to-include SNP --variant /gss/andrianovama/POLD1/second_raund/12_Mutect/results_our_PON_with_fibro/ARGL_F3/ARGL_F3.chr20.somatic.filtered.vcf --reference /home/andrianovama/POLD1/second_raund/0_Reference/ucsc.hg19.fasta --invertSelect false --exclude-non-variants false --preserve-alleles false --remove-unused-alternates false --restrict-alleles-to ALL --keep-original-ac false --keep-original-dp false --mendelian-violation false --invert-mendelian-violation false --mendelian-violation-qual-threshold 0.0 --select-random-fraction 0.0 --remove-fraction-genotypes 0.0 --fully-decode false --max-indel-size 2147483647 --min-indel-size 0 --max-filtered-genotypes 2147483647 --min-filtered-genotypes 0 --max-fraction-filtered-genotypes 1.0 --min-fraction-filtered-genotypes 0.0 --max-nocall-number 2147483647 --max-nocall-fraction 1.0 --set-filtered-gt-to-nocall false --allow-nonoverlapping-command-line-samples false --suppress-reference-path false --genomicsdb-use-bcf-codec false --genomicsdb-shared-posixfs-optimizations false --interval-set-rule UNION --interval-padding 0 --interval-exclusion-padding 0 --interval-merging-rule ALL --read-validation-stringency SILENT --seconds-between-progress-updates 10.0 --disable-sequence-dictionary-validation false --create-output-bam-index true --create-output-bam-md5 false --create-output-variant-index true --create-output-variant-md5 false --lenient false --add-output-sam-program-record true --add-output-vcf-command-line true --cloud-prefetch-buffer 40 --cloud-index-prefetch-buffer -1 --disable-bam-index-caching false --sites-only-vcf-output false --help false --version false --showHidden false --verbosity INFO --QUIET false --use-jdk-deflater false --use-jdk-inflater false --gcs-max-retries 20 --gcs-project-for-requester-pays  --disable-tool-default-read-filters false",Version="4.1.8.1",Date="May 19, 2021 2:40:44 PM MSK">
+##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes, for each ALT allele, in the same order as listed">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency, for each ALT allele, in the same order as listed">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+##INFO=<ID=AS_FilterStatus,Number=A,Type=String,Description="Filter status for each allele, as assessed by ApplyRecalibration. Note that the VCF filter field will reflect the most lenient/sensitive status across all alleles.">
+##INFO=<ID=AS_SB_TABLE,Number=1,Type=String,Description="Allele-specific forward/reverse read counts for strand bias tests. Includes the reference and alleles separated by |.">
+##INFO=<ID=AS_UNIQ_ALT_READ_COUNT,Number=A,Type=Integer,Description="Number of reads with unique start and mate end positions for each alt at a variant site">
+##INFO=<ID=CONTQ,Number=1,Type=Float,Description="Phred-scaled qualities that alt allele are not due to contamination">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth; some reads may have been filtered">
+##INFO=<ID=ECNT,Number=1,Type=Integer,Description="Number of events in this haplotype">
+##INFO=<ID=GERMQ,Number=1,Type=Integer,Description="Phred-scaled quality that alt alleles are not germline variants">
+##INFO=<ID=MBQ,Number=R,Type=Integer,Description="median base quality">
+##INFO=<ID=MFRL,Number=R,Type=Integer,Description="median fragment length">
+##INFO=<ID=MMQ,Number=R,Type=Integer,Description="median mapping quality">
+##INFO=<ID=MPOS,Number=A,Type=Integer,Description="median distance from end of read">
+##INFO=<ID=NALOD,Number=A,Type=Float,Description="Negative log 10 odds of artifact in normal with same allele fraction as tumor">
+##INFO=<ID=NCount,Number=1,Type=Integer,Description="Count of N bases in the pileup">
+##INFO=<ID=NLOD,Number=A,Type=Float,Description="Normal log 10 likelihood ratio of diploid het or hom alt genotypes">
+##INFO=<ID=OCM,Number=1,Type=Integer,Description="Number of alt reads whose original alignment doesn't match the current contig.">
+##INFO=<ID=PON,Number=0,Type=Flag,Description="site found in panel of normals">
+##INFO=<ID=POPAF,Number=A,Type=Float,Description="negative log 10 population allele frequencies of alt alleles">
+##INFO=<ID=ROQ,Number=1,Type=Float,Description="Phred-scaled qualities that alt allele are not due to read orientation artifact">
+##INFO=<ID=RPA,Number=R,Type=Integer,Description="Number of times tandem repeat unit is repeated, for each allele (including reference)">
+##INFO=<ID=RU,Number=1,Type=String,Description="Tandem repeat unit (bases)">
+##INFO=<ID=SEQQ,Number=1,Type=Integer,Description="Phred-scaled quality that alt alleles are not sequencing errors">
+##INFO=<ID=STR,Number=0,Type=Flag,Description="Variant is a short tandem repeat">
+##INFO=<ID=STRANDQ,Number=1,Type=Integer,Description="Phred-scaled quality of strand bias artifact">
+##INFO=<ID=STRQ,Number=1,Type=Integer,Description="Phred-scaled quality that alt alleles in STRs are not polymerase slippage errors">
+##INFO=<ID=TLOD,Number=A,Type=Float,Description="Log 10 likelihood ratio score of variant existing versus not existing">
+##MutectVersion=2.2
+##contig=<ID=chr1,length=249250621,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr2,length=243199373,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr3,length=198022430,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr4,length=191154276,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr5,length=180915260,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr6,length=171115067,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr7,length=159138663,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr8,length=146364022,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr9,length=141213431,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr10,length=135534747,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr11,length=135006516,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr12,length=133851895,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr13,length=115169878,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr14,length=107349540,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr15,length=102531392,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr16,length=90354753,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr17,length=81195210,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr18,length=78077248,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr19,length=59128983,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr20,length=63025520,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr21,length=48129895,assembly=ucsc.hg19.fasta>
+##contig=<ID=chr22,length=51304566,assembly=ucsc.hg19.fasta>
+##contig=<ID=chrX,length=155270560,assembly=ucsc.hg19.fasta>
+##contig=<ID=chrY,length=59373566,assembly=ucsc.hg19.fasta>
+##filtering_status=These calls have been filtered by FilterMutectCalls to label false positives with a list of failed filters and true positives with PASS.
+##reference=file:///home/andrianovama/POLD1/second_raund/0_Reference/ucsc.hg19.fasta
+##source=FilterMutectCalls
+##source=SelectVariants
+##tumor_sample=PD44582e_duplex
+#CHROM	POS	ID	REF	ALT
+chr1	200016188	.	T	TA
+chr1	73637853	.	A	AT
+chr1	54396617	.	C	CT
+chr1	28695439	.	A	AT
+chr1	108030548	.	G	T
+chr1	118858644	.	T	C
+chr1	120050453	.	G	A
+chr1	14252877	.	C	A
+chr1	153056636	.	C	T
+chr1	172121190	.	A	T
+chr1	188881789	.	C	A
+chr1	191407048	.	G	T
+chr1	192181747	.	T	C
+chr1	198990467	.	A	G
+chr1	20510978	.	G	A
+chr1	21520417	.	A	C
+chr1	227842647	.	T	C
+chr1	231355452	.	A	C
+chr1	32246293	.	G	T
+chr1	32337549	.	G	T
+chr1	33549308	.	G	T
+chr1	41922653	.	A	T
+chr1	43586933	.	T	C
+chr1	44239781	.	T	A
+chr1	54395114	.	T	C
+chr1	80729340	.	A	G
+chr1	82557189	.	C	A
+chr1	93960250	.	T	C
+chr10	104929046	.	A	G
+chr10	111371911	.	T	A
+chr10	112658558	.	A	T
+chr10	119076976	.	C	A
+chr10	19648803	.	A	G
+chr10	22143252	.	G	T
+chr10	23826052	.	C	T
+chr10	24013285	.	C	A
+chr10	25976046	.	G	T
+chr10	29254898	.	T	C
+chr10	35508170	.	A	C
+chr10	43281520	.	G	T
+chr10	44532716	.	T	C
+chr10	45370287	.	A	G
+chr10	54879762	.	C	G
+chr10	56126260	.	A	G
+chr10	58711282	.	G	T
+chr10	59319173	.	A	G
+chr10	64794301	.	G	A
+chr10	77455276	.	C	G
+chr10	90642220	.	A	G
+chr10	97399069	.	A	G
+chr10	99484211	.	C	T
+chr11	7853040	.	G	GA
+chr11	115179996	.	C	CA
+chr11	95788030	.	G	GA
+chr11	35037467	.	T	TA
+chr11	109263865	.	T	G
+chr11	110377840	.	T	C
+chr11	134480532	.	T	G
+chr11	16329527	.	T	G
+chr11	22877310	.	C	A
+chr11	28690157	.	C	T
+chr11	44799496	.	A	G
+chr11	55420384	.	A	G
+chr11	59004369	.	A	G
+chr11	59203326	.	G	A
+chr11	80994341	.	C	A
+chr11	83382108	.	T	A
+chr11	83584650	.	T	C
+chr12	119354833	.	T	C
+chr12	127897572	.	A	G
+chr12	131310441	.	A	G
+chr12	23294589	.	G	T
+chr12	2584838	.	A	G
+chr12	39120590	.	T	A
+chr12	41217848	.	C	T
+chr12	64163853	.	C	A
+chr12	66302881	.	C	T
+chr12	6681916	.	C	T
+chr12	78017120	.	G	T
+chr12	97974255	.	C	T
+chr13	103316512	.	CATT	C
+chr13	62579611	.	ATG	A
+chr13	110680015	.	C	A
+chr13	113795565	.	A	G
+chr13	31854833	.	G	T
+chr13	40432372	.	G	T
+chr13	49747566	.	A	G
+chr13	59266587	.	A	C
+chr13	60956905	.	C	A
+chr13	63654066	.	C	A
+chr13	74424193	.	A	G
+chr13	75755949	.	G	T
+chr13	80243251	.	G	T
+chr13	81195489	.	C	A
+chr13	85386341	.	G	A
+chr13	87141019	.	A	T
+chr14	31494359	.	G	GT
+chr14	39079860	.	G	T
+chr14	49392478	.	A	G
+chr14	53393655	.	G	T
+chr14	57353983	.	T	A
+chr14	62416264	.	C	T
+chr14	75897745	.	T	A
+chr14	85338251	.	A	T
+chr14	98571566	.	A	G
+chr15	60280518	.	GC	G
+chr15	60280518	.	GC	G
+chr15	56474062	.	ACAG	A
+chr15	60280518	.	GC	G
+chr15	94023213	.	A	AT
+chr15	32977650	.	A	T
+chr15	46982063	.	A	G
+chr15	50947039	.	C	A
+chr15	59383376	.	T	G
+chr15	74761449	.	C	T
+chr16	26042165	.	A	AT
+chr16	46789213	.	C	CA
+chr16	31909246	.	CAT	C
+chr16	83740368	.	G	GA
+chr16	1322507	.	C	A
+chr16	26902885	.	G	T
+chr16	56100128	.	A	G
+chr16	60786421	.	A	G
+chr16	61312502	.	T	G
+chr16	65388011	.	A	G
+chr16	77567226	.	C	T
+chr16	79681865	.	G	T
+chr16	79850078	.	T	A
+chr17	32560278	.	GA	G
+chr17	32087869	.	G	T
+chr17	43838316	.	G	T
+chr17	59175058	.	T	C
+chr17	71023908	.	G	A
+chr17	79275804	.	G	T
+chr18	37567920	.	A	AT
+chr18	13453491	.	A	G
+chr18	19402435	.	T	A
+chr18	24612743	.	G	T
+chr18	30897217	.	C	T
+chr18	35688281	.	G	A
+chr18	37762161	.	A	G
+chr18	42126029	.	T	A
+chr18	54695657	.	G	T
+chr18	58943461	.	T	C
+chr18	62897283	.	A	G
+chr18	65770182	.	C	A
+chr18	67971030	.	T	G
+chr18	71895050	.	G	T
+chr19	34753637	.	G	T
+chr19	52262902	.	G	T
+chr19	7474914	.	T	C
+chr2	144581135	.	C	CA
+chr2	172857360	.	T	TA
+chr2	57453567	.	AT	A
+chr2	108724058	.	C	CA
+chr2	81357320	.	G	GA
+chr2	89879310	.	A	AGAATG
+chr2	194353356	.	T	TTTTTG
+chr2	211115735	.	T	TA
+chr2	107791679	.	C	CT
+chr2	154359439	.	A	AT
+chr2	10782286	.	G	A
+chr2	11002247	.	G	T
+chr2	118528439	.	A	C
+chr2	130144993	.	G	A
+chr2	149535630	.	T	C
+chr2	15711572	.	G	T
+chr2	158722730	.	A	G
+chr2	158756826	.	G	T
+chr2	174103352	.	A	G
+chr2	17486578	.	G	T
+chr2	180434193	.	T	G
+chr2	182583801	.	C	A
+chr2	185766498	.	C	T
+chr2	214214669	.	T	C
+chr2	217662648	.	A	G
+chr2	221797292	.	C	A
+chr2	223746841	.	A	G
+chr2	230590348	.	A	G
+chr2	242088324	.	T	A
+chr2	242285636	.	C	T
+chr2	24856349	.	T	C
+chr2	32416402	.	C	A
+chr2	36548326	.	T	G
+chr2	39573651	.	C	T
+chr2	39788091	.	A	G
+chr2	51147891	.	A	G
+chr2	54035467	.	T	C
+chr2	65863413	.	C	T
+chr2	68684305	.	A	T
+chr2	69372768	.	A	G
+chr2	82701352	.	G	T
+chr2	98393960	.	A	G
+chr2	98650498	.	A	G
+chr20	24315578	.	CACACACAAAT	C
+chr20	15501035	.	C	T
+chr20	235064	.	T	A
+chr20	29906030	.	G	T
+chr20	39770720	.	C	A
+chr20	48173263	.	A	G
+chr20	52403941	.	G	T
+chr20	58331442	.	G	T
+chr21	36021454	.	A	G
+chr21	38466225	.	G	T
+chr22	43764897	.	A	AT
+chr22	29721108	.	G	T
+chr3	93701409	.	C	CT
+chr3	180955176	.	G	GA
+chr3	5395273	.	A	AT
+chr3	103205359	.	A	T
+chr3	116256410	.	T	C
+chr3	126934843	.	A	C
+chr3	149099251	.	T	G
+chr3	164095444	.	A	G
+chr3	178102724	.	C	A
+chr3	23434469	.	C	T
+chr3	24073892	.	C	T
+chr3	26874023	.	A	G
+chr3	3778534	.	T	A
+chr3	3864889	.	G	T
+chr3	57146056	.	C	A
+chr3	57842019	.	T	G
+chr3	6842682	.	A	G
+chr3	74798945	.	C	A
+chr3	76125128	.	A	C
+chr3	77375130	.	C	A
+chr3	7989410	.	A	G
+chr3	84378809	.	A	C
+chr3	9238278	.	G	T
+chr3	94156844	.	G	T
+chr3	97874022	.	C	G
+chr4	67251580	.	T	TA
+chr4	29208755	.	G	GA
+chr4	35016264	.	A	AT
+chr4	188296922	.	ATT	A
+chr4	93886019	.	C	CA
+chr4	115463460	.	T	A
+chr4	11750771	.	C	T
+chr4	121547395	.	T	C
+chr4	12450007	.	C	A
+chr4	14448376	.	C	T
+chr4	156200016	.	G	A
+chr4	160970266	.	T	C
+chr4	166081275	.	G	T
+chr4	180130761	.	C	A
+chr4	181859134	.	T	A
+chr4	188113737	.	A	C
+chr4	188878883	.	T	C
+chr4	1904155	.	T	C
+chr4	19353196	.	T	G
+chr4	2616051	.	A	G
+chr4	28139822	.	C	A
+chr4	31341501	.	T	C
+chr4	37374305	.	C	A
+chr4	75360426	.	A	T
+chr4	76175871	.	G	T
+chr4	80926667	.	G	T
+chr4	82585623	.	G	T
+chr4	87447979	.	A	G
+chr4	92957919	.	T	C
+chr4	96537437	.	C	T
+chr4	97521597	.	T	C
+chr5	61918236	.	ATT	A
+chr5	99604973	.	C	CA
+chr5	25020815	.	T	TG
+chr5	159061367	.	CACGT	C
+chr5	164097276	.	C	CT
+chr5	105836636	.	A	C
+chr5	111198675	.	A	C
+chr5	11772897	.	A	G
+chr5	123563039	.	T	A
+chr5	132864748	.	A	T
+chr5	137612237	.	T	C
+chr5	138622030	.	A	C
+chr5	140810547	.	T	C
+chr5	142766641	.	G	C
+chr5	144052851	.	A	G
+chr5	145362458	.	G	T
+chr5	145524203	.	C	A
+chr5	2074909	.	A	T
+chr5	33908544	.	G	A
+chr5	38209742	.	C	A
+chr5	38419245	.	A	G
+chr5	46393147	.	T	C
+chr5	49551676	.	C	A
+chr5	51332659	.	G	T
+chr5	5978385	.	T	G
+chr5	68584706	.	G	C
+chr5	8100325	.	T	C
+chr5	84671291	.	C	A
+chr5	87371956	.	G	T
+chr5	95149710	.	G	T
+chr6	72470142	.	G	GA
+chr6	31328263	.	G	GA
+chr6	44405199	.	A	AT
+chr6	123410683	.	A	AT
+chr6	116083579	.	G	T
+chr6	122623867	.	G	T
+chr6	123363515	.	C	A
+chr6	126808554	.	T	A
+chr6	130425672	.	G	T
+chr6	131682792	.	A	C
+chr6	131717066	.	C	A
+chr6	133512722	.	A	G
+chr6	137425508	.	T	C
+chr6	139688208	.	G	T
+chr6	1411202	.	A	T
+chr6	158656869	.	T	C
+chr6	16358320	.	A	C
+chr6	168286870	.	C	A
+chr6	18337939	.	T	G
+chr6	22274030	.	C	T
+chr6	35673573	.	G	T
+chr6	6457454	.	C	T
+chr6	95547044	.	G	C
+chr7	122940087	.	C	CA
+chr7	156043387	.	AG	A
+chr7	119395150	.	A	C
+chr7	123836525	.	A	T
+chr7	145227269	.	C	A
+chr7	155380090	.	T	G
+chr7	39272417	.	G	T
+chr7	43218669	.	G	T
+chr7	46423362	.	A	G
+chr7	62149639	.	A	G
+chr7	68168370	.	G	C
+chr7	91922919	.	A	G
+chr7	94266913	.	T	A
+chr7	96610091	.	A	G
+chr8	132861586	.	T	TA
+chr8	56527823	.	G	GA
+chr8	79368953	.	C	CA
+chr8	90149865	.	AG	A
+chr8	90149865	.	AG	A
+chr8	103992247	.	T	A
+chr8	104153759	.	C	A
+chr8	109196427	.	G	T
+chr8	11282653	.	C	A
+chr8	117544646	.	T	A
+chr8	130941837	.	G	T
+chr8	132843916	.	G	T
+chr8	13759866	.	A	C
+chr8	19003030	.	T	G
+chr8	26325013	.	A	C
+chr8	32067611	.	G	T
+chr8	35796980	.	A	G
+chr8	37420783	.	G	T
+chr8	41108127	.	A	G
+chr8	43441784	.	T	C
+chr8	47969642	.	T	A
+chr8	50045156	.	C	A
+chr8	60278316	.	C	A
+chr8	61780729	.	T	C
+chr8	68961444	.	T	G
+chr8	71365713	.	T	C
+chr8	71707517	.	C	T
+chr8	72955733	.	A	C
+chr9	104059322	.	T	C
+chr9	106971319	.	T	C
+chr9	115080504	.	G	T
+chr9	17629851	.	G	T
+chr9	22858820	.	C	T
+chr9	28199030	.	C	A
+chr9	33911621	.	A	G
+chr9	35917822	.	A	G
+chr9	76100922	.	G	T
+chr9	76699511	.	G	T
+chr9	78257647	.	A	C
+chr9	81507334	.	C	A
+chr9	87678294	.	T	G
+chrX	35290504	.	A	AT
+chrX	1413515	.	G	GA
+chrX	108215456	.	T	C
+chrX	116250365	.	A	G
+chrX	155001472	.	A	G
+chrX	2060207	.	G	A
+chrX	34386463	.	G	T
+chrX	36039306	.	C	A
+chrX	56580460	.	T	A
+chrX	84746828	.	T	A
+chrX	98843297	.	T	C
+chrY	14463708	.	T	G
+chrY	18384016	.	A	T
+chrY	18784600	.	T	G
