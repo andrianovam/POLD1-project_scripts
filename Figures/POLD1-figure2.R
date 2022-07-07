@@ -23,7 +23,7 @@ tiff(filename="Output_plots/Figure2a_signatures_fibros_p0.tiff", width=10, heigh
   + geom_bar(stat = "identity")
   + facet_grid(cols = vars(result_df$Status), scale = 'free_x',space = "free_x")
   + theme_bw() 
-  + scale_fill_manual(values = c("grey", "darkred", "blue", "darkblue","darkseagreen1", "darkseagreen2", "darkseagreen3"), labels = c("SBS58", "SBS10c\n(POLD1 deficiency)", "SBS1\n(clock-like)", "SBS5\n(clock-like)", "SBS7a\n(UV irradiation)", "SBS7b\n(UV irradiation)", "SBS7d\n(UV irradiation)"))
+  + scale_fill_manual(values = c("grey", "darkred", "blue", "darkblue","darkseagreen1", "darkseagreen2", "darkseagreen3"), labels = c("SBS58\n(possible artefacts)", "SBS10c\n(POLD1 deficiency)", "SBS1\n(clock-like)", "SBS5\n(clock-like)", "SBS7a\n(UV radiation)", "SBS7b\n(UV radiation)", "SBS7d\n(UV radiation)"))
   + xlab("")
   + ylab("")
   + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=7))
