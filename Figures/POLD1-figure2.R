@@ -121,7 +121,7 @@ tiff(filename="Output_plots/Figure2d_fibros_mutrate_by_signature.tiff", width=6.
   + facet_grid(cols = vars(factor(result$Type, levels = sig_levels)), scales = "free_y")
   + theme( panel.border = element_blank())
   + theme(panel.spacing.x = unit(1.5,"line"))
-  + scale_fill_manual(values = c('darkblue','darkred'))
+  + scale_fill_manual(values = c('darkred','darkblue'))
   + xlab("")
   + ylab("")
   + geom_hline(yintercept = result$wt_value, linetype = "dashed", col="black", size=1.2)
