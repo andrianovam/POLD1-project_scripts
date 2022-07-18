@@ -58,7 +58,7 @@ dev.off()
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
 library(ref_genome, character.only = TRUE)
 
-vcf_files <- c("Input_files/Tumors/413701TT.target_more_0.15.vcf","Input_files/Tumors/AD1301_T_somatic_filtered_0.15_PASS.vcf")
+vcf_files <- c("Input_files/Tumors/IV_1_T.target_more_0.15.vcf","Input_files/Tumors/D316H_T_somatic_filtered_0.15_PASS.vcf")
 vcf_files
 sample_names <- c("POLD1_L4747P","POLD1_D316H")
 vcfs <- read_vcfs_as_granges(vcf_files, sample_names, ref_genome,  type = "all")
@@ -81,7 +81,7 @@ library(ref_genome, character.only = TRUE)
 vcf_files <- list.files(path = "Input_files/crypts", pattern="*.vcf", full.names = T)
 sample_names <- list.files(path = "Input_files/crypts", pattern="*.vcf")
 vcf_files_tumors <- list.files(path = "Input_files/Tumors/", full.names = T)
-sample_names_tumors <- c("413701TT","AD1301")
+sample_names_tumors <- c("IV.1_T","D316H_T")
 
 vcf_files_all = c(vcf_files, vcf_files_tumors)
 sample_names_all = c(sample_names, sample_names_tumors)
