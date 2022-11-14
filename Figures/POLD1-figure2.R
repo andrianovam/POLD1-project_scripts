@@ -189,7 +189,7 @@ tiff(filename="Output_plots/Figure2f_fibros_p40_pca.tiff", width=8, height=6, re
   + theme(legend.title = element_markdown()))
 dev.off()
 
-#2g
+#2e
 
 weights_pc_by_type<-as.data.frame(res.pca_by_type$rotation)
 weights_pc_by_type$Mut_type = rownames(weights_pc_by_type)
