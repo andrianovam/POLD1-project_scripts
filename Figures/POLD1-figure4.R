@@ -12,8 +12,8 @@ library(ggh4x)
 library(reshape2)
 library(RColorBrewer)
 library(Rcpp)
-
-
+library(ggpmisc)
+library(grid)
 
 setwd(dirname(this.path()))
 
@@ -27,7 +27,7 @@ mut_per_mb_second_tumour	= 96.4
 mut_per_mb_hypermutable_polyps_stratton = mean(c(241677/3000,236160/3000, 233453/3000))
 
 
-tiff(filename="Output_plots/Figure4a_Mutability_of_different_ucec_tcga_wes.tiff", width=11, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure4a_Mutability_of_different_ucec_tcga_wes.tiff", width=12, height=7, res=300, units='cm')
 
 (ggplot(df, aes(y=factor(Status,levels = status_levels), x=Mut_per_mb,fill=Tissue))
   + geom_density_ridges(alpha=0.7)+scale_x_continuous(trans='log',breaks=c(10,100))
@@ -35,17 +35,17 @@ tiff(filename="Output_plots/Figure4a_Mutability_of_different_ucec_tcga_wes.tiff"
   + scale_fill_brewer(palette = "Dark2")
   + geom_vline(xintercept = 10,linetype='dashed', col="darkgrey")
   + geom_vline(xintercept = 100,linetype='dashed', col="darkgrey")
-  + annotate("point", x = mut_per_mb_413711TT, y = 7, col="#7570B3", size=1)
-  + annotate('point', x = mut_per_mb_second_tumour, y = 7, col="#7570B3", size=1)
-  + annotate('point', x = mut_per_mb_hypermutable_polyps_stratton, y = 7, col='#D95F02', size=1)
+  + annotate("point", x = mut_per_mb_413711TT, y = 7, col="#7570B3", size=2)
+  + annotate('point', x = mut_per_mb_second_tumour, y = 7, col="#7570B3", size=2)
+  + annotate('point', x = mut_per_mb_hypermutable_polyps_stratton, y = 7, col='#D95F02', size=2)
   + ylab("")
   + xlab("Mutations per megabase")
-  + annotate("text", x = 1, y = 8.5,label = "Nonmutable", size=2.5)
-  + annotate("text", x = 30, y = 8.5, label = "Hypermutable", size=2.5)
-  + annotate("text", x = 500, y = 8.5, label = "Ultrahypermutable", size=2.5)
-  + annotate("text", x = 100, y = 7.6, label = "S478N", size=1.8, col='#D95F02', fontface=2)
-  + annotate("text", x = 140, y = 7.3, label = "D316H", size=1.8, col='#7570B3', fontface=2)
-  + annotate("text", x = 350, y = 7.3, label = "L474P", size=1.8, col='#7570B3', fontface=2)
+  + annotate("text", x = 1, y = 8.5,label = "Nonmutable", size=2.9)
+  + annotate("text", x = 33, y = 8.5, label = "Hypermutable", size=2.9)
+  + annotate("text", x = 500, y = 8.5, label = "Ultrahypermutable", size=2.9)
+  + annotate("text", x = 100, y = 7.8, label = "S478N", size=2.5, col='#D95F02', fontface=2)
+  + annotate("text", x = 140, y = 7.35, label = "D316H", size=2.5, col='#7570B3', fontface=2)
+  + annotate("text", x = 370, y = 7.35, label = "L474P", size=2.5, col='#7570B3', fontface=2)
   + theme(legend.position = 'top')
   + theme(legend.key.size = unit(0.4, "cm"))
   + theme(legend.margin =margin(r=10,l=5,t=0,b=0))
@@ -211,7 +211,7 @@ result = merge(result, df_rt[,c(1,7)], by="id")
 x = aggregate(result[,c(5,8)], list(result$Type,result$rt_bin), FUN=sum)
 colnames(x) = c("Mut_type","rt_bin","N_mut","Sites")
 x$Nonmut = x$Sites-x$N_mut
-#model <- glm(data = x,cbind(N_mut, Nonmut) ~ Mut_type+rt_bin+Mut_type*rt_bin, family="binomial")
+model <- glm(data = x,cbind(N_mut, Nonmut) ~ Mut_type+rt_bin+Mut_type*rt_bin, family="binomial")
 
 homo = x[x$Mut_type=='S478N/S478N',]
 homo = homo[homo$rt_bin >3,]
@@ -227,14 +227,17 @@ y = rbind(homo,hetero)
 
 tiff(filename="Output_plots/Figure4e_mutrate_vs_rt_homo_hetero.tiff", width=8, height=7, res=300, units='cm')
 (ggplot(y, aes(x=rt_bin, y=mutrate_norm, group=Mut_type,col=Mut_type))
-  +geom_point()
-  +geom_smooth(method="lm") 
-  +theme_bw()
-  +scale_color_manual(values=c("plum2","purple4"), name="POLD1")
-  +theme(legend.position = 'bottom')
-  +xlab("Late <--- Replication timing ---> Early") 
-  +ylab("TCT>TAT mutation rate")
-  +theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10)))
+  + geom_point()
+  + geom_smooth(method="lm") 
+  + theme_bw()
+  + scale_color_manual(values=c("plum3","purple4"), name="POLD1")
+  + theme(legend.position = 'bottom')
+  + xlab("Late <--- Replication timing ---> Early") 
+  + ylab("TCT>TAT mutation rate")
+  + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10))
+  + stat_poly_eq(aes(label = after_stat(eq.label)),label.x = 0.95, vstep=0.15, size=4)
+  +  annotate(geom="text", x=40, y=4, label=paste("p-val","<2e-16", sep=""), size=3.5)
+  )
 dev.off()
 
 
