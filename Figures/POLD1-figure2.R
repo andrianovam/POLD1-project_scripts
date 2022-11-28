@@ -6,8 +6,35 @@ library("this.path")
 library(cowplot)
 library(gridExtra)
 library(reshape2)
+library(ggpubr)
 
 setwd(dirname(this.path()))
+
+#Figure 2a (refitted by FitSig)
+
+df = read.table("Input_files/Figure2A_signatures_fibros_p0_refitted.txt", header=T)
+result_df = melt(df)
+
+sigs_levels = c("SBS58","SBS10c","SBS1", "SBS5", "SBS7a", "SBS7b", "SBS7d")
+samples_levels = c('III.2', 'III.4','IV.1','IV.2', 'IV.4','IV.6', 'IV.3', 'IV.5')
+
+tiff(filename="Output_plots/Figure2a_signatures_fibros_p0_refitted.tiff", width=10, height=6, res=300, units='cm')
+
+(ggplot(aes(y=value, x=factor(Samples,levels = samples_levels), fill = factor(variable, levels = sigs_levels)), data = result_df)
+  + geom_bar(stat = "identity")
+  + facet_grid(cols = vars(result_df$Status), scale = 'free_x',space = "free_x")
+  + theme_bw() 
+  + scale_fill_manual(values = c("grey", "darkred", "blue", "darkblue","darkseagreen1", "darkseagreen2", "darkseagreen3"), labels = c("SBS58\n(possible artefact)", "SBS10c\n(POLD1 deficiency)", "SBS1\n(clock-like)", "SBS5\n(clock-like)", "SBS7a\n(UV radiation)", "SBS7b\n(UV radiation)", "SBS7d\n(UV radiation)"))
+  + xlab("")
+  + ylab("")
+  + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=7))
+  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  + theme(strip.text = element_text(size = 10))
+  + theme(legend.key.height = unit(0.5, "cm"),legend.margin=margin(t = 0, unit='cm'),legend.title=element_blank())
+)
+
+
+dev.off()
 
 #Figure 2a
 
@@ -36,13 +63,30 @@ tiff(filename="Output_plots/Figure2a_signatures_fibros_p0.tiff", width=10, heigh
 dev.off()
 
 #Figure 2b
+df = read.table("Input_files/Figure2A_signatures_fibros_p0_refitted.txt", header=T)
+df$N_mut = df$SBS1 + df$SBS5 + df$SBS7a + df$SBS7b + df$SBS7d + df$SBS10c + df$SBS58
+
+fit <- lm(N_mut ~ Age, data=df)
+
+tiff(filename="Output_plots/Figure2b_nmut_vs_age.tiff", width=7, height=7, res=300, units='cm')
+(ggplot(df, aes(x = Age, y=N_mut, col=Status, label=Samples))
+  + geom_point(size=1)
+  + theme_bw()
+  + xlim(20, 75)
+  + ylim(0, 31000)
+  + geom_text(hjust=-0.1, vjust=-0.1, col="black", size=2.5)
+  + geom_abline(slope = coef(fit)["Age"],intercept = coef(fit)["(Intercept)"], col="darkgrey")
+  + scale_color_manual(values=c('orange','cornflowerblue'), name="")
+  + theme(legend.position = "top")
+  + ylab("Number of mutations"))
+dev.off()
+
+#Figure 2b
 
 df = read.table("Input_files/Figure2BC_fibros_mutrate_data.txt", header=T)
 
 samples_levels = c("IV.5","IV.3", "IV.2", "III.2", "III.4", "IV.4")
-
-tiff(filename="Output_plots/Figure2b_mutrate_fibros.tiff", width=7.5, height=7, res=300, units='cm')
-(ggplot(df, aes(x=factor(Sample,levels = samples_levels), y=N_mut_all, fill=Status))
+p_sns <- (ggplot(df, aes(x=factor(Sample,levels = samples_levels), y=N_mut_all, fill=Status))
   + geom_bar(stat = 'identity',col="black")
   + theme_bw()
   + xlab("")
@@ -50,9 +94,22 @@ tiff(filename="Output_plots/Figure2b_mutrate_fibros.tiff", width=7.5, height=7, 
   + scale_fill_manual(values=c("darkgrey","white"))
   + coord_flip()
   + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8))
-  + theme(legend.key.size = unit(0.4, "cm"), legend.position = "top")
+  + theme(legend.key.size = unit(0.4, "cm"), legend.position = "top",legend.justification='left',)
   + theme(plot.margin = margin(0,0.5,0,0, "cm")))
 
+p_indels <- (ggplot(df, aes(x=factor(Sample,levels = samples_levels), y=Indels, fill=Status))
+          + geom_bar(stat = 'identity',col="black")
+          + theme_bw()
+          + xlab("")
+          + ylab("Indels")
+          + scale_fill_manual(values=c("darkgrey","white"))
+          + coord_flip()
+          + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8))
+          + theme(legend.key.size = unit(0.4, "cm"), legend.position = "top", legend.justification='left',)
+          + theme(plot.margin = margin(0,0.5,0,0, "cm")))
+
+tiff(filename="Output_plots/Figure2b_mutrate_fibros.tiff", width=15, height=4, res=300, units='cm')
+ggarrange(p_sns, p_indels, ncol=2, common.legend = TRUE, legend="top")
 dev.off()
 
 
@@ -333,7 +390,7 @@ tiff(filename="Output_plots/Figure2g_other_tissues_PC1.tiff", width=8, height=6,
   + theme(legend.spacing.x = unit(0.05, 'cm'))
   + theme(legend.position = "bottom",legend.box="vertical",legend.margin=margin(0,0,30,0))
   + ylim(-0.2,0.35)
-  + scale_x_discrete(labels=c("Fibros_wt" = "Fibros\nwt", "Fibros" = "Fibros\nL474P","colon" = "colon", "blood"="blood","sperm"="sperm"))
+  + scale_x_discrete(labels=c("Fibros_wt" = "Fibros\nwt\n(2)", "Fibros" = "Fibros\nL474P\n(4)","colon" = "colon\n(52)", "blood"="blood\n(1)","sperm"="sperm\n(1)"))
   + scale_color_discrete(name = "Mutation"))
 dev.off()
 
