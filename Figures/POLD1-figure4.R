@@ -230,7 +230,7 @@ tiff(filename="Output_plots/Figure4e_mutrate_vs_rt_homo_hetero.tiff", width=8, h
   + geom_point()
   + geom_smooth(method="lm") 
   + theme_bw()
-  + scale_color_manual(values=c("plum3","purple4"), name="POLD1")
+  + scale_color_manual(values=c("purple4","plum3"), name="POLD1")
   + theme(legend.position = 'bottom')
   + xlab("Late <--- Replication timing ---> Early") 
   + ylab("TCT>TAT mutation rate")

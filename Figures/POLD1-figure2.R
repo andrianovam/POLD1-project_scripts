@@ -13,9 +13,10 @@ setwd(dirname(this.path()))
 #Figure 2a (refitted by FitSig)
 
 df = read.table("Input_files/Figure2A_signatures_fibros_p0_refitted.txt", header=T)
+df$Age = as.factor(df$Age)
 result_df = melt(df)
 
-sigs_levels = c("SBS58","SBS10c","SBS1", "SBS5", "SBS7a", "SBS7b", "SBS7d")
+sigs_levels = c("SBS58","SBS10c", "SBS5", "SBS7a", "SBS7b", "SBS7d")
 samples_levels = c('III.2', 'III.4','IV.1','IV.2', 'IV.4','IV.6', 'IV.3', 'IV.5')
 
 tiff(filename="Output_plots/Figure2a_signatures_fibros_p0_refitted.tiff", width=10, height=6, res=300, units='cm')
@@ -24,7 +25,7 @@ tiff(filename="Output_plots/Figure2a_signatures_fibros_p0_refitted.tiff", width=
   + geom_bar(stat = "identity")
   + facet_grid(cols = vars(result_df$Status), scale = 'free_x',space = "free_x")
   + theme_bw() 
-  + scale_fill_manual(values = c("grey", "darkred", "blue", "darkblue","darkseagreen1", "darkseagreen2", "darkseagreen3"), labels = c("SBS58\n(possible artefact)", "SBS10c\n(POLD1 deficiency)", "SBS1\n(clock-like)", "SBS5\n(clock-like)", "SBS7a\n(UV radiation)", "SBS7b\n(UV radiation)", "SBS7d\n(UV radiation)"))
+  + scale_fill_manual(values = c("grey", "darkred",  "darkblue","darkseagreen1", "darkseagreen2", "darkseagreen3"), labels = c("SBS58\n(possible artefact)", "SBS10c\n(POLD1 deficiency)", "SBS5\n(clock-like)", "SBS7a\n(UV radiation)", "SBS7b\n(UV radiation)", "SBS7d\n(UV radiation)"))
   + xlab("")
   + ylab("")
   + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=7))
@@ -64,21 +65,22 @@ dev.off()
 
 #Figure 2b
 df = read.table("Input_files/Figure2A_signatures_fibros_p0_refitted.txt", header=T)
-df$N_mut = df$SBS1 + df$SBS5 + df$SBS7a + df$SBS7b + df$SBS7d + df$SBS10c + df$SBS58
+df$All_SNVs = df$SBS5 + df$SBS7a + df$SBS7b + df$SBS7d + df$SBS10c + df$SBS58
 
-fit <- lm(N_mut ~ Age, data=df)
-
-tiff(filename="Output_plots/Figure2b_nmut_vs_age.tiff", width=7, height=7, res=300, units='cm')
-(ggplot(df, aes(x = Age, y=N_mut, col=Status, label=Samples))
-  + geom_point(size=1)
-  + theme_bw()
-  + xlim(20, 75)
-  + ylim(0, 31000)
-  + geom_text(hjust=-0.1, vjust=-0.1, col="black", size=2.5)
-  + geom_abline(slope = coef(fit)["Age"],intercept = coef(fit)["(Intercept)"], col="darkgrey")
-  + scale_color_manual(values=c('orange','cornflowerblue'), name="")
-  + theme(legend.position = "top")
-  + ylab("Number of mutations"))
+fit <- lm(All_SNVs ~ Age, data=df)
+p_all =(ggplot(df, aes(x = Age, y=All_SNVs))
+        + geom_point(aes(col=Status),size=2)
+        + theme_bw()
+        + xlim(0, 70)
+        + geom_text(aes(col=Status, label=Samples), hjust=-0.3, vjust=0, col="black", size=2.5)
+        + geom_abline(slope = coef(fit)[["Age"]],intercept = coef(fit)["(Intercept)"], col="darkgrey")
+        + stat_cor()
+        + scale_color_manual(values=c('orange','cornflowerblue'), name="POLD1 status")
+        +theme(legend.position = "top")
+        + ylab("SNVs number")
+)
+tiff(filename="Output_plots/Figure2b_nmut_vs_age.tiff", width=8, height=8, res=300, units='cm')
+p_all
 dev.off()
 
 #Figure 2b
@@ -142,7 +144,7 @@ dev.off()
 
 #Figure 2c (Exposures of signatures predicted by SigProfiler)
 
-df = read.table("Input_files/Figure2C_fibros_mutrate_data.txt", header=T)
+df = read.table("Input_files/Figure2BC_fibros_mutrate_data.txt", header=T)
 
 df_subset = df[,c(1,3,4,5,6,7,8)]
 df_subset_prop = as.data.frame(apply(df_subset[,c(2:7)], 2, function(x) x/rowSums(df_subset[,c(2:7)])))
@@ -173,7 +175,7 @@ dev.off()
 
 #Figure 2d (Refitted by sigfit)
 
-df = read.table("Input_files/Figure2C_fibros_mutrate_data.txt", header=T)
+df = read.table("Input_files/Figure2C_fibros_mutrate_data.txt", header=T, sep="\t")
 
 df_L474P = df[df$Status == "L474P",]
 df_wt = df[df$Status == "wt",]
@@ -305,7 +307,7 @@ nudges_y = c(-0.01, 0, 0, 0, 0.03, 0.01)
 nudges_x = c(0.025, 0.025, 0.025, 0.025, 0.01, 0.025)
 
 #2f
-tiff(filename="Output_plots/Figure2f_fibros_p40_pca.tiff", width=8, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2f_fibros_p40_pca.tiff", width=8, height=8, res=300, units='cm')
 (ggplot(result_pc_by_type, aes(x=-PC1, y=PC2, col=PolD_status))
   + geom_point(size=2)
   + theme_bw()
@@ -348,7 +350,7 @@ dev.off()
 
 Tissue<-c("Fibros","Fibros","Fibros","Fibros_wt","Fibros","Fibros_wt")
 result_pc_by_type$Tissue = Tissue
-
+result_pc_by_type$Data = "Experiment"
 #download data for crypts and project to pc space
 vcf_files_colon_PolD <- list.files(path = './Input_files/crypts/', pattern="*.vcf", full.names = T)
 vcfs_colon_PolD <- read_vcfs_as_granges(vcf_files_colon_PolD, vcf_files_colon_PolD, ref_genome,  type = "snv")
@@ -358,7 +360,7 @@ colon_PolD_pca_by_type<-as.data.frame(predict(res.pca_by_type, mut_mat_freq_by_t
 colon_PolD_pca_by_type$Tissue = "colon"
 colon_PolD_pca_by_type$Pol = "PolD"
 colon_PolD_pca_by_type$PolD_status = c(rep("S478N", 35), rep("L474P", 8), rep("D316N",9))
-
+colon_PolD_pca_by_type$Data = "Accumulated with age"
 #download data for sperm and project to pc space
 vcf_files_duplex_PolD <- list.files(path = './Input_files/blood_sperm/', pattern="*.vcf", full.names = T)
 vcfs_duplex_PolD <- read_vcfs_as_granges(vcf_files_duplex_PolD, vcf_files_duplex_PolD, ref_genome,  type = "snv")
@@ -368,17 +370,29 @@ duplex_PolD_pca_by_type<-as.data.frame(predict(res.pca_by_type, mut_mat_freq_by_
 duplex_PolD_pca_by_type$Tissue = c("sperm","blood")
 duplex_PolD_pca_by_type$Pol = "PolD"
 duplex_PolD_pca_by_type$PolD_status = "S478N"
+duplex_PolD_pca_by_type$Data = "Accumulated with age"
 
+#download data for fibros p0
+vcf_files_fibros_p0 <- list.files(path = '/home/mandrianova/Lab/POLD_project/Second_round/Somatic/F2/vcfs', pattern="*.vcf", full.names = T)
+vcfs_fibros_p0 <- read_vcfs_as_granges(vcf_files_fibros_p0, vcf_files_fibros_p0, ref_genome,  type = "snv")
+mut_mat_fibros_p0 <- mut_matrix(vcf_list = vcfs_fibros_p0, ref_genome = ref_genome)
+mut_mat_freq_by_type_fibros_p0 = create_mut_mat_freq_by_type(mut_mat_fibros_p0)
+fibros_p0_pca_by_type<-as.data.frame(predict(res.pca_by_type, mut_mat_freq_by_type_fibros_p0))
+fibros_p0_pca_by_type$Tissue = c("Fibros_p0","Fibros_p0","Fibros_p0","Fibros_p0","Fibros_p0_wt","Fibros_p0","Fibros_p0_wt","Fibros_p0")
+fibros_p0_pca_by_type$Pol = "PolD"
+fibros_p0_pca_by_type$PolD_status = c("L474P","L474P","L474P","L474P","wt","L474P","wt","L474P")
+fibros_p0_pca_by_type$Data = "Accumulated with age"
 
 #merge results for fibros, crypts and sperm in one dataframe
 result_by_type = rbind(result_pc_by_type, colon_PolD_pca_by_type)
 result_by_type = rbind(result_by_type, duplex_PolD_pca_by_type)
+result_by_type = rbind(result_by_type, fibros_p0_pca_by_type)
 
 x_levels = c("Fibro_wt", "Fibro_PolD", "colon","blood", "sperm")
-tissue_levels = c("Fibros_wt", "Fibros", "colon", "blood","sperm")
+tissue_levels = c("Fibros_wt", "Fibros", "Fibros_p0_wt", "Fibros_p0", "colon", "blood","sperm")
 mutation_levels = c("wt", "L474P","D316N", "S478N")
 
-tiff(filename="Output_plots/Figure2g_other_tissues_PC1.tiff", width=8, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2g_other_tissues_PC1.tiff", width=9, height=6, res=300, units='cm')
 (ggplot(result_by_type, aes(x=factor(Tissue, levels = tissue_levels), y= -PC1))
   + geom_boxplot()
   + geom_point(aes(col=PolD_status), size=1)
@@ -390,7 +404,10 @@ tiff(filename="Output_plots/Figure2g_other_tissues_PC1.tiff", width=8, height=6,
   + theme(legend.spacing.x = unit(0.05, 'cm'))
   + theme(legend.position = "bottom",legend.box="vertical",legend.margin=margin(0,0,30,0))
   + ylim(-0.2,0.35)
-  + scale_x_discrete(labels=c("Fibros_wt" = "Fibros\nwt\n(2)", "Fibros" = "Fibros\nL474P\n(4)","colon" = "colon\n(52)", "blood"="blood\n(1)","sperm"="sperm\n(1)"))
-  + scale_color_discrete(name = "Mutation"))
+  + scale_x_discrete(labels=c("Fibros_p0_wt" = "Fibros\nwt\n(2)", "Fibros_p0" = "Fibros\nL474P\n(8)" ,"Fibros_wt" = "Fibros\nwt\n(2)", "Fibros" = "Fibros\nL474P\n(4)","colon" = "colon\n(52)", "blood"="blood\n(1)","sperm"="sperm\n(1)"))
+  + scale_color_discrete(name = "Mutation")
+  + facet_grid(cols=vars(factor(result_by_type$Data, levels = c("Experiment","Accumulated with age"))),scales="free_x", space="free_x"))
 dev.off()
+
+
 
