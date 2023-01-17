@@ -10,82 +10,9 @@ library(ggpubr)
 
 setwd(dirname(this.path()))
 
-#Figure 2a (refitted by FitSig)
+#Figure 2AB
 
-df = read.table("Input_files/Figure2A_signatures_fibros_p0_refitted.txt", header=T)
-df$Age = as.factor(df$Age)
-result_df = melt(df)
-
-sigs_levels = c("SBS58","SBS10c", "SBS5", "SBS7a", "SBS7b", "SBS7d")
-samples_levels = c('III.2', 'III.4','IV.1','IV.2', 'IV.4','IV.6', 'IV.3', 'IV.5')
-
-tiff(filename="Output_plots/Figure2a_signatures_fibros_p0_refitted.tiff", width=10, height=6, res=300, units='cm')
-
-(ggplot(aes(y=value, x=factor(Samples,levels = samples_levels), fill = factor(variable, levels = sigs_levels)), data = result_df)
-  + geom_bar(stat = "identity")
-  + facet_grid(cols = vars(result_df$Status), scale = 'free_x',space = "free_x")
-  + theme_bw() 
-  + scale_fill_manual(values = c("grey", "darkred",  "darkblue","darkseagreen1", "darkseagreen2", "darkseagreen3"), labels = c("SBS58\n(possible artefact)", "SBS10c\n(POLD1 deficiency)", "SBS5\n(clock-like)", "SBS7a\n(UV radiation)", "SBS7b\n(UV radiation)", "SBS7d\n(UV radiation)"))
-  + xlab("")
-  + ylab("")
-  + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=7))
-  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-  + theme(strip.text = element_text(size = 10))
-  + theme(legend.key.height = unit(0.5, "cm"),legend.margin=margin(t = 0, unit='cm'),legend.title=element_blank())
-)
-
-
-dev.off()
-
-#Figure 2a
-
-df = read.table("Input_files/Figure2A_signatures_fibros_p0.txt", header=T)
-result_df = melt(df)
-
-sigs_levels = c("SBS58","SBS10c","SBS1", "SBS5", "SBS7a", "SBS7b", "SBS7d")
-samples_levels = c('III.2', 'III.4','IV.1','IV.2', 'IV.4','IV.6', 'IV.3', 'IV.5')
-
-tiff(filename="Output_plots/Figure2a_signatures_fibros_p0.tiff", width=10, height=6, res=300, units='cm')
-
-(ggplot(aes(y=value, x=factor(Samples,levels = samples_levels), fill = factor(variable, levels = sigs_levels)), data = result_df)
-  + geom_bar(stat = "identity")
-  + facet_grid(cols = vars(result_df$Status), scale = 'free_x',space = "free_x")
-  + theme_bw() 
-  + scale_fill_manual(values = c("grey", "darkred", "blue", "darkblue","darkseagreen1", "darkseagreen2", "darkseagreen3"), labels = c("SBS58\n(possible artefact)", "SBS10c\n(POLD1 deficiency)", "SBS1\n(clock-like)", "SBS5\n(clock-like)", "SBS7a\n(UV radiation)", "SBS7b\n(UV radiation)", "SBS7d\n(UV radiation)"))
-  + xlab("")
-  + ylab("")
-  + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=7))
-  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-  + theme(strip.text = element_text(size = 10))
-  + theme(legend.key.height = unit(0.5, "cm"),legend.margin=margin(t = 0, unit='cm'),legend.title=element_blank())
-)
-   
-
-dev.off()
-
-#Figure 2b
-df = read.table("Input_files/Figure2A_signatures_fibros_p0_refitted.txt", header=T)
-df$All_SNVs = df$SBS5 + df$SBS7a + df$SBS7b + df$SBS7d + df$SBS10c + df$SBS58
-
-fit <- lm(All_SNVs ~ Age, data=df)
-p_all =(ggplot(df, aes(x = Age, y=All_SNVs))
-        + geom_point(aes(col=Status),size=2)
-        + theme_bw()
-        + xlim(0, 70)
-        + geom_text(aes(col=Status, label=Samples), hjust=-0.3, vjust=0, col="black", size=2.5)
-        + geom_abline(slope = coef(fit)[["Age"]],intercept = coef(fit)["(Intercept)"], col="darkgrey")
-        + stat_cor()
-        + scale_color_manual(values=c('orange','cornflowerblue'), name="POLD1 status")
-        +theme(legend.position = "top")
-        + ylab("SNVs number")
-)
-tiff(filename="Output_plots/Figure2b_nmut_vs_age.tiff", width=8, height=8, res=300, units='cm')
-p_all
-dev.off()
-
-#Figure 2b
-
-df = read.table("Input_files/Figure2BC_fibros_mutrate_data.txt", header=T)
+df = read.table("Input_files/Figure2AB_fibros_mutrate_data.txt", header=T)
 
 samples_levels = c("IV.5","IV.3", "IV.2", "III.2", "III.4", "IV.4")
 p_sns <- (ggplot(df, aes(x=factor(Sample,levels = samples_levels), y=N_mut_all, fill=Status))
@@ -110,12 +37,12 @@ p_indels <- (ggplot(df, aes(x=factor(Sample,levels = samples_levels), y=Indels, 
           + theme(legend.key.size = unit(0.4, "cm"), legend.position = "top", legend.justification='left',)
           + theme(plot.margin = margin(0,0.5,0,0, "cm")))
 
-tiff(filename="Output_plots/Figure2b_mutrate_fibros.tiff", width=15, height=4, res=300, units='cm')
+tiff(filename="Output_plots/Figure2AB_SNVs_indels_fibros.tiff", width=15, height=4, res=300, units='cm')
 ggarrange(p_sns, p_indels, ncol=2, common.legend = TRUE, legend="top")
 dev.off()
 
 
-#Figure 2c (refitted subset of signatures by SigFit)
+#Figure 2C (COSMIC Signatures in p40 - refitted subset of signatures by SigFit)
 
 df = read.table("Input_files/Figure2C_fibros_mutrate_data.txt", header=T)
 df_subset = df[,c(1,12,3,4,5,6,7,8)]
@@ -124,7 +51,7 @@ result_df = melt(df_subset)
 sigs_levels = c("SBS10c","SBS36", "SBS37", "SBS45", "SBS93","SBS5")
 samples_levels = c('IV.4', 'III.4', 'III.2', 'IV.2', 'IV.3', 'IV.5')
 
-tiff(filename="Output_plots/Figure2c_signatures_fibros_p40_refitted.tiff", width=10, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2C_signatures_fibros_p40_refitted.tiff", width=10, height=6, res=300, units='cm')
 
 (ggplot(aes(y=value, x=factor(Sample,levels = samples_levels), fill = factor(variable, levels = sigs_levels)), data = result_df)
   + geom_bar(stat = "identity")
@@ -142,9 +69,9 @@ tiff(filename="Output_plots/Figure2c_signatures_fibros_p40_refitted.tiff", width
 
 dev.off()
 
-#Figure 2c (Exposures of signatures predicted by SigProfiler)
+#Figure 2C (COSMIC Signatures in p40 - Exposures of signatures predicted by SigProfiler, without refitting)
 
-df = read.table("Input_files/Figure2BC_fibros_mutrate_data.txt", header=T)
+df = read.table("Input_files/Figure2AB_fibros_mutrate_data.txt", header=T)
 
 df_subset = df[,c(1,3,4,5,6,7,8)]
 df_subset_prop = as.data.frame(apply(df_subset[,c(2:7)], 2, function(x) x/rowSums(df_subset[,c(2:7)])))
@@ -155,7 +82,7 @@ result_df = melt(df_subset_prop)
 sigs_levels = c("SBS10c","SBS36", "SBS37", "SBS45", "SBS93","SBS5")
 samples_levels = c('IV.4', 'III.4', 'III.2', 'IV.2', 'IV.3', 'IV.5')
 
-tiff(filename="Output_plots/Figure2c_signatures_fibros_p40.tiff", width=10, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2C_signatures_fibros_p40.tiff", width=10, height=6, res=300, units='cm')
 
 (ggplot(aes(y=value, x=factor(Sample,levels = samples_levels), fill = factor(variable, levels = sigs_levels)), data = result_df)
   + geom_bar(stat = "identity")
@@ -173,9 +100,9 @@ tiff(filename="Output_plots/Figure2c_signatures_fibros_p40.tiff", width=10, heig
 
 dev.off()
 
-#Figure 2d (Refitted by sigfit)
+#Figure 2D (Refitted by sigfit)
 
-df = read.table("Input_files/Figure2C_fibros_mutrate_data.txt", header=T, sep="\t")
+df = read.table("Input_files/Figure2D_fibros_mutrate_data_refitted.txt", header=T, sep="\t")
 
 df_L474P = df[df$Status == "L474P",]
 df_wt = df[df$Status == "wt",]
@@ -204,7 +131,7 @@ result = rbind(df_L474P_SBS5,df_L474P_SBS10c)
 samples_order = c('IV.4', 'III.4', 'III.2', 'IV.2')
 sig_levels = c("SBS5", "SBS10c")
 
-tiff(filename="Output_plots/Figure2d_fibros_mutrate_by_signature_refitted.tiff", width=6.5, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2D_fibros_mutrate_by_signature_refitted.tiff", width=6.5, height=6, res=300, units='cm')
 (ggplot(result, aes(x=factor(Sample,levels=samples_order), y=N_mut, fill=Type))
   + geom_bar(stat="identity", alpha=0.8)
   + theme_bw()
@@ -220,9 +147,9 @@ tiff(filename="Output_plots/Figure2d_fibros_mutrate_by_signature_refitted.tiff",
   + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8)))
 dev.off()
 
-#Figure 2d (For initial signatures extracted by sigProfiler)
+#Figure 2D (For initial signatures extracted by sigProfiler, without refitting)
 
-df = read.table("Input_files/Figure2BC_fibros_mutrate_data.txt", header=T)
+df = read.table("Input_files/Figure2AB_fibros_mutrate_data.txt", header=T)
 
 df_L474P = df[df$Status == "L474P",]
 df_wt = df[df$Status == "wt",]
@@ -246,7 +173,7 @@ result = rbind(df_L474P_SBS5,df_L474P_SBS10c)
 samples_order = c('IV.4', 'III.4', 'III.2', 'IV.2')
 sig_levels = c("SBS5", "SBS10c")
 
-tiff(filename="Output_plots/Figure2d_fibros_mutrate_by_signature.tiff", width=6.5, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2D_fibros_mutrate_by_signature.tiff", width=6.5, height=6, res=300, units='cm')
 (ggplot(result, aes(x=factor(Sample,levels=samples_order), y=N_mut, fill=Type))
   + geom_bar(stat="identity", alpha=0.8)
   + theme_bw()
@@ -262,7 +189,7 @@ tiff(filename="Output_plots/Figure2d_fibros_mutrate_by_signature.tiff", width=6.
   + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8)))
 dev.off()
 
-#Figures 2e-2g
+#Figures 2E-2G
 
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
 library(ref_genome, character.only = TRUE)
@@ -306,8 +233,8 @@ result_pc_by_type$Pol = pol
 nudges_y = c(-0.01, 0, 0, 0, 0.03, 0.01)
 nudges_x = c(0.025, 0.025, 0.025, 0.025, 0.01, 0.025)
 
-#2f
-tiff(filename="Output_plots/Figure2f_fibros_p40_pca.tiff", width=8, height=8, res=300, units='cm')
+#2F
+tiff(filename="Output_plots/Figure2F_fibros_p40_pca.tiff", width=8, height=8, res=300, units='cm')
 (ggplot(result_pc_by_type, aes(x=-PC1, y=PC2, col=PolD_status))
   + geom_point(size=2)
   + theme_bw()
@@ -321,7 +248,7 @@ tiff(filename="Output_plots/Figure2f_fibros_p40_pca.tiff", width=8, height=8, re
   + theme(legend.title = element_markdown()))
 dev.off()
 
-#2e
+#2E
 
 weights_pc_by_type<-as.data.frame(res.pca_by_type$rotation)
 weights_pc_by_type$Mut_type = rownames(weights_pc_by_type)
@@ -332,7 +259,7 @@ muttype_level = c("A[C>A]A","A[C>A]C","A[C>A]G","A[C>A]T","C[C>A]A","C[C>A]C","C
 x_labels = c("A.A","A.C","A.G","A.T","C.A","C.C","C.G","C.T","G.A","G.C","G.G","G.T","T.A","T.C","T.G","T.T","A.A","A.C","A.G","A.T","C.A","C.C","C.G","C.T","G.A","G.C","G.G","G.T","T.A","T.C","T.G","T.T","A.A","A.C","A.G","A.T","C.A","C.C","C.G","C.T","G.A","G.C","G.G","G.T","T.A","T.C","T.G","T.T","A.A","A.C","A.G","A.T","C.A","C.C","C.G","C.T","G.A","G.C","G.G","G.T","T.A","T.C","T.G","T.T","A.A","A.C","A.G","A.T","C.A","C.C","C.G","C.T","G.A","G.C","G.G","G.T","T.A","T.C","T.G","T.T","A.A","A.C","A.G","A.T","C.A","C.C","C.G","C.T","G.A","G.C","G.G","G.T","T.A","T.C","T.G","T.T" )
 
 
-tiff(filename="Output_plots/Figure2e_PC1_spectrum.tiff", width=18, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2E_PC1_spectrum.tiff", width=18, height=6, res=300, units='cm')
 (ggplot(weights_pc_by_type)
   + geom_bar(aes(x=factor(Mut_type,levels = muttype_level), y=minus_PC1, fill=Mutation),stat="identity")
   + theme_bw()
@@ -346,7 +273,7 @@ tiff(filename="Output_plots/Figure2e_PC1_spectrum.tiff", width=18, height=6, res
   + xlab(""))
 dev.off()
 
-#2g
+#2G
 
 Tissue<-c("Fibros","Fibros","Fibros","Fibros_wt","Fibros","Fibros_wt")
 result_pc_by_type$Tissue = Tissue
@@ -373,7 +300,7 @@ duplex_PolD_pca_by_type$PolD_status = "S478N"
 duplex_PolD_pca_by_type$Data = "Accumulated with age"
 
 #download data for fibros p0
-vcf_files_fibros_p0 <- list.files(path = '/home/mandrianova/Lab/POLD_project/Second_round/Somatic/F2/vcfs', pattern="*.vcf", full.names = T)
+vcf_files_fibros_p0 <- list.files(path = './Input_files/Fibros_p0/', pattern="*.vcf", full.names = T)
 vcfs_fibros_p0 <- read_vcfs_as_granges(vcf_files_fibros_p0, vcf_files_fibros_p0, ref_genome,  type = "snv")
 mut_mat_fibros_p0 <- mut_matrix(vcf_list = vcfs_fibros_p0, ref_genome = ref_genome)
 mut_mat_freq_by_type_fibros_p0 = create_mut_mat_freq_by_type(mut_mat_fibros_p0)
@@ -392,7 +319,7 @@ x_levels = c("Fibro_wt", "Fibro_PolD", "colon","blood", "sperm")
 tissue_levels = c("Fibros_wt", "Fibros", "Fibros_p0_wt", "Fibros_p0", "colon", "blood","sperm")
 mutation_levels = c("wt", "L474P","D316N", "S478N")
 
-tiff(filename="Output_plots/Figure2g_other_tissues_PC1.tiff", width=9, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure2G_other_tissues_PC1.tiff", width=9, height=6, res=300, units='cm')
 (ggplot(result_by_type, aes(x=factor(Tissue, levels = tissue_levels), y= -PC1))
   + geom_boxplot()
   + geom_point(aes(col=PolD_status), size=1)
