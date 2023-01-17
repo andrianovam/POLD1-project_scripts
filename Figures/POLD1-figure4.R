@@ -17,7 +17,7 @@ library(grid)
 
 setwd(dirname(this.path()))
 
-#Figure 4a
+#Figure 4A
 df = read.table("Input_files/Figure4A_hyper_ultra_mutability.txt", header=T, sep="\t")
 df = df[df$Status!="PolD_MSI-H-nonfunctional",]
 df = df[df$Status!="PolD_PolE",]
@@ -27,7 +27,7 @@ mut_per_mb_second_tumour	= 96.4
 mut_per_mb_hypermutable_polyps_stratton = mean(c(241677/3000,236160/3000, 233453/3000))
 
 
-tiff(filename="Output_plots/Figure4a_Mutability_of_different_ucec_tcga_wes.tiff", width=12, height=7, res=300, units='cm')
+tiff(filename="Output_plots/Figure4A_Mutability_of_different_ucec_tcga_wes.tiff", width=12, height=7, res=300, units='cm')
 
 (ggplot(df, aes(y=factor(Status,levels = status_levels), x=Mut_per_mb,fill=Tissue))
   + geom_density_ridges(alpha=0.7)+scale_x_continuous(trans='log',breaks=c(10,100))
@@ -56,7 +56,7 @@ tiff(filename="Output_plots/Figure4a_Mutability_of_different_ucec_tcga_wes.tiff"
 dev.off()
 
 
-#Figure 4b
+#Figure 4B
 
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
 library(ref_genome, character.only = TRUE)
@@ -71,12 +71,12 @@ type_occurrences
 
 mut_mat <- mut_matrix(vcf_list = vcfs, ref_genome = ref_genome)
 
-tiff(filename="Output_plots/Figure4b_tumor_spectra.tiff", width=12, height=7, res=300, units='cm')
+tiff(filename="Output_plots/Figure4B_tumor_spectra.tiff", width=12, height=7, res=300, units='cm')
 plot_96_profile(mut_mat, condensed = TRUE)
 dev.off()
 
 
-#Figure 4c
+#Figure 4C
 data("cosmic_signatures_v3.2")
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
 library(ref_genome, character.only = TRUE)
@@ -119,7 +119,7 @@ exposures_melt = melt(exposures_mean)
 
 mutation_levels = c("D316N", "L474P", "S478N", "S478N_hypermutable", "L474P_hypermutable","D316H_hypermutable")
 
-tiff(filename="Output_plots/Figure4?_crypts_tumors_somatic_signatures.tiff", width=10, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure4C_crypts_tumors_somatic_signatures.tiff", width=10, height=6, res=300, units='cm')
 (ggplot(exposures_melt, aes(x=factor(Mutation, mutation_levels), y=value, fill=variable))
   +geom_bar(stat="identity",width=0.7)
   +theme_bw()
@@ -136,7 +136,7 @@ tiff(filename="Output_plots/Figure4?_crypts_tumors_somatic_signatures.tiff", wid
 dev.off()
 
 
-#Figure 4d
+#Figure 4D
 
 df = read.table("Input_files/413701TT_chr19_germline_vars.txt")
 df = df[,c(1:5)]
@@ -159,7 +159,7 @@ mut_vaf = df[df$Pos==50909701,]$Vaf
 mut_pos = 50909701
 
 
-tiff(filename="Output_plots/Figure4d_413701TT_chr19_allelic_disbalance.tiff", width=9, height=6, res=300, units='cm')
+tiff(filename="Output_plots/Figure4D_413701TT_chr19_allelic_disbalance.tiff", width=9, height=6, res=300, units='cm')
 (ggplot(df_for_plot, aes(x=Pos, y=Value))
   +geom_point(size=0.5)
   +geom_vline(xintercept = mut_pos,col="red", size=1)
@@ -175,7 +175,7 @@ tiff(filename="Output_plots/Figure4d_413701TT_chr19_allelic_disbalance.tiff", wi
 dev.off()
 
 
-#Figure 4e
+#Figure 4E
 
 df = read.table("Input_files/100kb_windows_pold_S478N_context_CtoA_TCT.txt")
 colnames(df) = c("chr", "start", "end", "id", "N_mut")
@@ -225,7 +225,7 @@ hetero$mutrate_norm = hetero$mutrate/min(hetero$mutrate)
 
 y = rbind(homo,hetero)
 
-tiff(filename="Output_plots/Figure4e_mutrate_vs_rt_homo_hetero.tiff", width=8, height=7, res=300, units='cm')
+tiff(filename="Output_plots/Figure4E_mutrate_vs_rt_homo_hetero.tiff", width=8, height=7, res=300, units='cm')
 (ggplot(y, aes(x=rt_bin, y=mutrate_norm, group=Mut_type,col=Mut_type))
   + geom_point()
   + geom_smooth(method="lm") 
@@ -241,7 +241,7 @@ tiff(filename="Output_plots/Figure4e_mutrate_vs_rt_homo_hetero.tiff", width=8, h
 dev.off()
 
 
-#Figure 4f
+#Figure 4F
 
 df = read.table("Input_files/Figure4F_tcga_ucec_mutrate.txt", header=T, sep="\t")
 

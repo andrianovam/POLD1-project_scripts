@@ -8,7 +8,7 @@ library(gridExtra)
 
 setwd(dirname(this.path()))
 
-#Figure 3a
+#Figure 3A
 
 df = read.table("Input_files/public_trio_data.txt")
 head(df)
@@ -22,7 +22,7 @@ data = rbind(count_mut_per_family, our_data)
 levels_pold = c("Father","Mother", "Both wt", "Published trios")
 levels_pold_our = c("Father","Mother", "Both wt")
 
-tiff(filename="Output_plots/Figure3a_germline_counts.tiff", width=9, height=9, res=300, units='cm')
+tiff(filename="Output_plots/Figure3A_germline_counts.tiff", width=9, height=9, res=300, units='cm')
 
 (ggplot()
   + geom_violin(data = data, aes(x=factor(POLD,levels = levels_pold),y=mut, fill=POLD), alpha=0.6)
@@ -43,7 +43,7 @@ tiff(filename="Output_plots/Figure3a_germline_counts.tiff", width=9, height=9, r
 
 dev.off()
 
-#Figure 3b
+#Figure 3B
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
 library(ref_genome, character.only = TRUE)
 
@@ -76,7 +76,7 @@ data2 <- result %>% filter(Set =='Add')
 our <- result %>% filter(POLD!='Published trios'&Set=='Main')
 public <- result %>% filter(POLD =='Published trios'&Set=='Main')
 
-tiff(filename="Output_plots/Figure3b_germline_4contexts_prop.tiff", width=8, height=8, res=300, units='cm')
+tiff(filename="Output_plots/Figure3B_germline_4contexts_prop.tiff", width=8, height=8, res=300, units='cm')
 (ggplot()
   + geom_violin(data = data1, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion, fill=POLD), alpha=0.6)
   + geom_jitter(data = public, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion), size=0.05, alpha=0.3)
@@ -97,7 +97,7 @@ tiff(filename="Output_plots/Figure3b_germline_4contexts_prop.tiff", width=8, hei
 
 dev.off()
 
-#Figure 3c
+#Figure 3C
 normal_trios_by_type = read.table("Input_files/public_germline_pca_by_type.txt", header=T)
 normal_trios_by_type$Status = "Published trios"
 
@@ -121,7 +121,7 @@ data2 <- result_by_type %>% filter(Set =='Add')
 our <- result_by_type %>% filter(Status!='Published trios'&Set=='Main')
 public <- result_by_type %>% filter(Status =='Published trios'&Set=='Main')
 
-tiff(filename="Output_plots/Figure3c_germline_PC1_by_type.tiff", width=8, height=8, res=300, units='cm')
+tiff(filename="Output_plots/Figure3C_germline_PC1_by_type.tiff", width=8, height=8, res=300, units='cm')
 
 
 (ggplot()
@@ -144,7 +144,7 @@ tiff(filename="Output_plots/Figure3c_germline_PC1_by_type.tiff", width=8, height
 
 dev.off()
 
-#Figure 3d-f
+#Figure 3D-F
 df = read.table("Input_files/public_trio_data.txt")
 head(df)
 colnames(df) = c("chr","coord","mut","family_id","age","dataset")
@@ -228,11 +228,11 @@ p4<-(ggplot(normal_germline_SBS10c_cosine, aes(x=coef_SBS10c))
      + annotate("text", x=0.6, y=200, label= paste("p-val", ks_pval_SBS10c_cosine_mothers, sep="="), color = 'khaki3')
      + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=10)))
 
-tiff(filename="Output_plots/Figure3d-e_germline_nmut_PC1_SBS10_by_type.tiff", width=17, height=12, res=300, units='cm')
+tiff(filename="Output_plots/Figure3D-F_germline_nmut_PC1_SBS10_by_type.tiff", width=17, height=12, res=300, units='cm')
 plot_grid(p1, p2, p4, align = "v", nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
 dev.off()
 
-#Figure 3g
+#Figure 3G
 
 df_trios = read.table("Input_files/public_germline_pca_by_type.txt", header=T)
 df_trios$type = "Data"
@@ -262,11 +262,11 @@ p2<-(ggplot(qq.out, aes( x= x, y = y))
      + theme_bw()
      + theme(axis.text=element_text(size=7),axis.title=element_text(size=8),legend.text=element_text(size=6)))
 
-jpeg(filename=paste("Output_plots/Figure3g_PC1_normal_trios_vs_simuations.tiff", sep=""), width=9, height=9, res=300, units='cm')
+jpeg(filename=paste("Output_plots/Figure3G_PC1_normal_trios_vs_simuations.tiff", sep=""), width=9, height=9, res=300, units='cm')
 p1 + annotation_custom(ggplotGrob(p2), xmin = 0, xmax = 0.7, ymin = 1.5, ymax = 3.9)
 dev.off()
 
-#Figure 3h
+#Figure 3H
 
 df_trios = read.table("Input_files/simulations_pca_by_type_prop_pold_0.05.txt",header=T)
 df_trios$type = "Simulation with POLD1 mutants"
@@ -304,7 +304,7 @@ p2<-(ggplot(qq.out, aes( x= x, y = y))
 
 
 setwd("D:/Lab/cancer/Article_PolD_family/plots")
-jpeg(filename=paste("Figure3h_simuations_norm_vs_simulations_pold_pca_6000trios.tiff", sep=""), width=9, height=9, res=300, units='cm')
+jpeg(filename=paste("Figure3H_simuations_norm_vs_simulations_pold_pca_6000trios.tiff", sep=""), width=9, height=9, res=300, units='cm')
 p1 + annotation_custom(ggplotGrob(p2), xmin = 0.05, xmax = 0.7, ymin = 1.15, ymax = 4)
 dev.off()
 
