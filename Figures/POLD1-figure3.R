@@ -1,310 +1,291 @@
-library(ggplot2)
+library(ggridges)
+library(viridis)
 library(ggtext)
-library(dplyr)
-library("MutationalPatterns")
-library("this.path")
-library(cowplot)
+library(this.path)
+library(MutationalPatterns)
 library(gridExtra)
+library(ggplot2)
+library(lsa)
+library(sigfit)
+library(reshape2)
+library(ggh4x)
+library(reshape2)
+library(RColorBrewer)
+library(Rcpp)
+library(ggpmisc)
+library(grid)
 
 setwd(dirname(this.path()))
 
 #Figure 3A
+df = read.table("Input_files/Figure3A_hyper_ultra_mutability.txt", header=T, sep="\t")
+df = df[df$Status!="PolD_MSI-H-nonfunctional",]
+df = df[df$Status!="PolD_PolE",]
+status_levels = c("MSS", "PolE_MSS", "MSI", "PolD_MSI-H", "PolE_MSI-H", "POLE", "POLD1")
+mut_per_mb_413711TT	= 5729/40865275*1000000
+mut_per_mb_second_tumour	= 2224/42363162*1000000
+mut_per_mb_hypermutable_polyps_stratton = mean(c(241677/3000,236160/3000, 233453/3000))
 
-df = read.table("Input_files/public_trio_data.txt")
-head(df)
-colnames(df) = c("chr","coord","mut","family_id","age","dataset")
-count_mut_per_family = aggregate(mut ~ family_id, data = df[,c(3,4)], FUN = length)
-head(count_mut_per_family)
-count_mut_per_family$POLD = "Published trios"
-our_data = data.frame(family_id = c("IV.1","IV.2","IV.3","IV.4","IV.5","IV.6","IV.7","IV.8"), mut=c(64,62,71,61,64,88,24,50), POLD = c("Mother","Mother","Mother","Father","Father","Father","Father","Both wt"))
-data = rbind(count_mut_per_family, our_data)
 
-levels_pold = c("Father","Mother", "Both wt", "Published trios")
-levels_pold_our = c("Father","Mother", "Both wt")
+tiff(filename="Output_plots/Figure3A_Mutability_of_different_ucec_tcga_wes_new.tiff", width=12, height=7, res=300, units='cm')
 
-tiff(filename="Output_plots/Figure3A_germline_counts.tiff", width=9, height=9, res=300, units='cm')
-
-(ggplot()
-  + geom_violin(data = data, aes(x=factor(POLD,levels = levels_pold),y=mut, fill=POLD), alpha=0.6)
-  + geom_jitter(data = count_mut_per_family, aes(x=factor(POLD,levels = levels_pold),y=mut), size=0.05, alpha=0.3)
-  + geom_violin(data = data, aes(x=factor(POLD,levels = levels_pold),y=mut, fill=POLD), alpha=0.6)
-  + geom_point(data = our_data, aes(x=factor(POLD,levels = levels_pold_our),y=mut), size=0.5)
-  + theme_bw()
-  + theme(axis.title.x = element_markdown())
-  + theme(axis.title.y = element_markdown())
-  + ylab("Number of *de novo* mutations")+xlab("Parents *POLD1* status")
-  + scale_fill_manual(values=c("indianred3","khaki3","mediumseagreen"))
-  + scale_color_manual(values=c('black', "indianred4","khaki4","darkgreen"))
-  + scale_x_discrete(labels=c("Father" = "Father\nL474P\n(4)", "Mother" = "Mother\nL474P\n(3)", "Both wt" = "Both wt\nour data\n(1)", "Published trios" = "Both wt\npublished\n(6241)"))
-  + stat_summary(data = data, aes(x=factor(POLD,levels = levels_pold),y=mut), fun.data=mean_sdl, geom="pointrange",size=0.1, col='black')
-  + theme(legend.position='none')
-  + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8))
-)
+(ggplot(df, aes(y=factor(Status,levels = status_levels), x=Mut_per_mb,fill=Tissue))
+  + geom_density_ridges(alpha=0.6,scale = 0.8)+scale_x_continuous(trans='log',breaks=c(10,100))
+  + theme_bw() 
+  + scale_fill_brewer(palette = "Dark2")
+  + geom_vline(xintercept = 10,linetype='dashed', col="darkgrey")
+  + geom_vline(xintercept = 100,linetype='dashed', col="darkgrey")
+  + annotate("point", x = mut_per_mb_413711TT, y = 7, col="black", size=1.8)
+  + annotate("point", x = mut_per_mb_413711TT, y = 7, col="#7570B3", size=1.5)
+  + annotate('point', x = mut_per_mb_second_tumour, y = 7, col="black", size=1.8)
+  + annotate('point', x = mut_per_mb_second_tumour, y = 7, col="#7570B3", size=1.5)
+  + annotate('point', x = mut_per_mb_hypermutable_polyps_stratton, y = 7, col='black', size=1.8)
+  + annotate('point', x = mut_per_mb_hypermutable_polyps_stratton, y = 7, col='#D95F02', size=1.5)
+  + ylab("")
+  + xlab("Mutations per megabase")
+  + annotate("text", x = 1, y = 8.5,label = "", size=2.9)
+  + annotate("text", x = 33, y = 8.5, label = "Hypermutated", size=2.9)
+  + annotate("text", x = 500, y = 8.5, label = "Ultramutated", size=2.9)
+  + annotate("text", x = 100, y = 7.35, label = "S478N", size=2.5, col='#D95F02', fontface=2)
+  + annotate("text", x = 30, y = 7.35, label = "D316H", size=2.5, col='#7570B3', fontface=2)
+  + annotate("text", x = 300, y = 7.35, label = "L474P", size=2.5, col='#7570B3', fontface=2)
+  + theme(legend.position = 'top')
+  + theme(legend.key.size = unit(0.4, "cm"))
+  + theme(legend.margin =margin(r=10,l=5,t=0,b=0))
+  + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10))
+  + theme(axis.text.y = element_markdown())
+  + scale_y_discrete(expand = expansion(mult = c(0, 0.3)), labels=c("POLD1" = "*POLD1exo-*", "POLE" = "*POLEexo-*", "PolE_MSI-H" = "dMMR *POLEexo-*", "PolD_MSI-H" = "dMMR *POLD1exo-*", "MSI" = "dMMR", "PolE_MSS" = "*POLEexo-*", "MSS"="MMR proficiency<br>proofread proficiency")))
 
 dev.off()
 
+
 #Figure 3B
+
 ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
 library(ref_genome, character.only = TRUE)
 
-normal_trios = read.table("Input_files/public_trio_data_matrix.txt", header=T)
-vcf_files_germline <- list.files(path = "Input_files/de_novo/", full.names = T)
-vcf_files_germline
-sample_names_germline <- c("IV.1", "IV.2","IV.3","IV.4", "IV.5","IV.6","IV.7", "IV.8")
-status_germline<-c("Mother","Mother","Mother","Father","Father","Father","Father","Both wt", rep("Published trios", ncol(normal_trios)), "Father")
-set_germline<-c("Main","Main","Main","Main","Main","Main","Main","Main", rep("Main", ncol(normal_trios)), "Add")
-vcfs_germline <- read_vcfs_as_granges(vcf_files_germline, sample_names_germline, ref_genome,  type = "all")
-summary(vcfs_germline)
+vcf_files <- c("Input_files/Tumors/IV_1_T.target_more_0.15.vcf","Input_files/Tumors/D316H_somatic_filtered_PASS_autosomes_cov20_vaf_0.15_0.4.vcf")
+vcf_files
+sample_names <- c("POLD1_L4747P","POLD1_D316H")
+vcfs <- read_vcfs_as_granges(vcf_files, sample_names, ref_genome,  type = "all")
+summary(vcfs)
+type_occurrences <- mut_type_occurrences(vcfs, ref_genome)
+type_occurrences
 
-mut_mat_germline <- mut_matrix(vcf_list = vcfs_germline, ref_genome = ref_genome)
+mut_mat <- mut_matrix(vcf_list = vcfs, ref_genome = ref_genome)
 
-sperm = read.table("Input_files/duplex_trinucl.csv", sep=";", header=T, row.names=1)
-
-mut_mat_all = cbind(mut_mat_germline, normal_trios)
-mut_mat_all = cbind(mut_mat_all, sperm$POLD1_sperm)
-four_contexts = c("T[C>A]T", 'C[C>A]T', 'A[T>A]T','C[T>G]T')
-subset_4contexts = mut_mat_all[unlist(four_contexts), ]
-result = data.frame(sample = colnames(mut_mat_all), All_snv = colSums(mut_mat_all), four_context_prop = colSums(subset_4contexts), POLD = status_germline, Set = set_germline)
-result$four_contexts_proportion = result$four_context_prop/result$All_snv * 100
-
-
-levels_pold = c("Father","Mother", "Both wt", "Published trios")
-levels_pold_our = c("Father","Mother", "Both wt")
-
-data1 <- result %>% filter(Set=='Main')
-data2 <- result %>% filter(Set =='Add')
-our <- result %>% filter(POLD!='Published trios'&Set=='Main')
-public <- result %>% filter(POLD =='Published trios'&Set=='Main')
-
-tiff(filename="Output_plots/Figure3B_germline_4contexts_prop.tiff", width=8, height=8, res=300, units='cm')
-(ggplot()
-  + geom_violin(data = data1, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion, fill=POLD), alpha=0.6)
-  + geom_jitter(data = public, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion), size=0.05, alpha=0.3)
-  + geom_violin(data = data1, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion, fill=POLD), alpha=0.6)
-  + geom_point(data = our, aes(x=factor(POLD,levels = levels_pold_our),y=four_contexts_proportion), size=0.5)
-  + geom_point(data = data2, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion), size=1, col="indianred4")
-  + geom_text(data=data2,aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion, label="Sperm"),hjust=-0.2, size=3)
-  + theme_bw()
-  + theme(axis.title.x = element_markdown())
-  + theme(axis.title.y = element_markdown())
-  + ylab("Percent of *POLD1* contexts")+xlab("Parents *POLD1* status")
-  + scale_fill_manual(values=c("indianred3","khaki3","mediumseagreen"))
-  + scale_x_discrete(labels=c("Father" = "Father\nL474P\n(4)", "Mother" = "Mother\nL474P\n(3)", "Both wt" = "Both wt\nour data\n(1)", "Published trios" = "Both wt\npublished\n(6241)"))
-  + stat_summary(data = data1, aes(x=factor(POLD,levels = levels_pold),y=four_contexts_proportion), fun.data=mean_sdl, geom="pointrange", color="black",size=0.2)
-  + theme(legend.position='none')
-  + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8))
-)
-
+tiff(filename="Output_plots/Figure3B_tumor_spectra.tiff", width=12, height=7, res=300, units='cm')
+plot_96_profile(mut_mat, condensed = TRUE)
 dev.off()
+
 
 #Figure 3C
-normal_trios_by_type = read.table("Input_files/public_germline_pca_by_type.txt", header=T)
-normal_trios_by_type$Status = "Published trios"
+data("cosmic_signatures_v3.2")
+ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
+library(ref_genome, character.only = TRUE)
 
-our_trios_by_type = read.table("Input_files/our_germline_pca_by_type.txt", header=T)
-our_trios_by_type$Status = c("Father", "Father","Father","Mother","Father","Mother","Mother", "Both wt")
+vcf_files <- list.files(path = "Input_files/crypts", pattern="*.vcf", full.names = T)
+sample_names <- list.files(path = "Input_files/crypts", pattern="*.vcf")
+vcf_files_tumors <- list.files(path = "Input_files/Tumors/", pattern="*.vcf",full.names = T)
+sample_names_tumors <- c("D316H_T","IV.1_T")
 
-sperm_by_type = read.table("Input_files/sperm_duplex_germline_pca_freq_by_type.txt", header = T)
-sperm_by_type = sperm_by_type[,1:6]
-sperm_by_type$Status = "Father"
-sperm_by_type$Set = "Add"
-
-result_by_type = rbind(normal_trios_by_type, our_trios_by_type)
-result_by_type$Set = "Main"
-result_by_type = rbind(result_by_type, sperm_by_type[4,])
-
-levels_pold = c("Father","Mother", "Both wt", "Published trios")
-levels_pold_our = c("Father","Mother", "Both wt")
-
-data1 <- result_by_type %>% filter(Set=='Main')
-data2 <- result_by_type %>% filter(Set =='Add')
-our <- result_by_type %>% filter(Status!='Published trios'&Set=='Main')
-public <- result_by_type %>% filter(Status =='Published trios'&Set=='Main')
-
-tiff(filename="Output_plots/Figure3C_germline_PC1_by_type.tiff", width=8, height=8, res=300, units='cm')
+vcf_files_all = c(vcf_files, vcf_files_tumors)
+sample_names_all = c(sample_names, sample_names_tumors)
 
 
-(ggplot()
-  + geom_violin(data = data1, aes(x=factor(Status,levels = levels_pold),y=-PC1, fill=Status), alpha=0.6)
-  + geom_jitter(data = public, aes(x=factor(Status,levels = levels_pold),y=-PC1), size=0.05, alpha=0.3)
-  + geom_violin(data = data1, aes(x=factor(Status,levels = levels_pold),y=-PC1, fill=Status), alpha=0.6)
-  + geom_point(data = our, aes(x=factor(Status,levels = levels_pold_our),y=-PC1), size=0.5)
-  + geom_point(data = data2, aes(x=factor(Status,levels = levels_pold),y=-PC1), size=1, col="indianred4")
-  + geom_text(data=data2,aes(x=factor(Status,levels = levels_pold),y=-PC1, label="Sperm"),hjust=-0.2, size=3)
+vcfs <- read_vcfs_as_granges(vcf_files_all, sample_names_all, ref_genome,  type = "snv")
+
+summary(vcfs)
+
+tissue <- c(rep("S478N", 21), rep("S478N_hypermutable",3), rep("S478N", 11), rep("L474P", 8), rep("D316N", 9), "D316H_hypermutable", "L474P_hypermutable")
+mut_mat_crypts <- t(mut_matrix(vcf_list = vcfs, ref_genome = ref_genome))
+mut_mat_crypts=as.data.frame(mut_mat_crypts)
+mut_mat_crypts$Mutation = tissue
+test = aggregate(.~Mutation,data = mut_mat_crypts,  sum)
+rownames(test)=test$Mutation
+test = test[,c(2:ncol(test))]
+mcmc_samples_fit_genomes <- fit_signatures(counts = test[c("D316N","L474P","S478N","S478N_hypermutable"),], 
+                                   signatures = cosmic_signatures_v3.2[c(1,5,15,16),],
+                                   iter = 5000, 
+                                   warmup = 1000, 
+                                   chains = 1, 
+                                   seed = 1756)
+
+exposures_genomes <- retrieve_pars(mcmc_samples_fit_genomes, 
+                           par = "exposures", 
+                           hpd_prob = 0.90)
+
+mcmc_samples_fit_exomes <- fit_signatures(counts = test[c("L474P_hypermutable","D316H_hypermutable"),], 
+                                   signatures = cosmic_signatures_v3.2[c(1,5,15,16),],
+                                   iter = 5000, 
+                                   warmup = 1000, 
+                                   chains = 1, 
+                                   seed = 1756,
+                                   opportunities = "human-exome")
+
+exposures_exomes <- retrieve_pars(mcmc_samples_fit_exomes, 
+                                   par = "exposures", 
+                                   hpd_prob = 0.90)
+
+exposures = rbind(exposures_genomes$mean,exposures_exomes$mean)
+names(exposures)
+
+exposures$Mutation = rownames(exposures)
+exposures_melt = melt(exposures)
+
+
+mutation_levels = c("D316N", "L474P", "S478N", "S478N_hypermutable", "L474P_hypermutable","D316H_hypermutable")
+
+tiff(filename="Output_plots/Figure3C_crypts_tumors_somatic_signatures.tiff", width=8, height=8, res=300, units='cm')
+(ggplot(exposures_melt, aes(x=factor(Mutation, mutation_levels), y=value, fill=variable))
+  +geom_bar(stat="identity",width=0.7)
+  +theme_bw()
+  +ylab("Mutation fraction")
+  +scale_fill_manual(values = c("lightcoral","indianred4","plum2","purple4"),name="")
+  +scale_x_discrete(labels=c("D316N" = "D316N\nintestinal\ncrypts", "L474P" = "L474P\nintestinal\ncrypts","S478N" = "S478N\nintestinal\ncrypts", "S478N_hypermutable"="S478N\nAdenomas", "L474P_hypermutable"="L474P\nCancer","D316H_hypermutable"="D316H\nCancer"))
+  +xlab("")
+  +theme(axis.title.x=element_blank())
+  +theme(legend.position = 'top')
+  +theme(legend.key.size = unit(0.4, "cm"))
+  +theme(legend.margin =margin(r=10,l=5,t=5,b=0))
+  +theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"))
+  +theme(axis.text.y=element_text(size=8),axis.text.x=element_text(size=6),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10)))
+dev.off()
+
+
+#Figure 3D - LOH example
+
+df = read.table("Input_files/413701TT_chr19_germline_vars.txt")
+df = df[,c(1:5)]
+df$vaf1 = df$V4/df$V3
+df$vaf2 = df$V4/df$V3
+colnames(df)<-c("Chr","Pos", "Cov","Ref","Alt","Vaf1","Vaf2")
+df$Cov_log = log(df$Cov)
+df_vaf1 = df[,c(1,2,6)]
+colnames(df_vaf1)<-c("Chr","Pos","Value")
+df_vaf2 = df[,c(1,2,7)]
+colnames(df_vaf2)<-c("Chr","Pos","Value")
+df_for_plot_vafs = rbind(df_vaf1, df_vaf2)
+df_for_plot_vafs$Type="vaf"
+df_cov = df[,c(1,2,8)]
+colnames(df_cov)<-c("Chr","Pos", "Value")
+df_cov$Type="Cov,log"
+df_for_plot = rbind(df_for_plot_vafs, df_cov)
+
+mut_vaf = df[df$Pos==50909701,]$Vaf
+mut_pos = 50909701
+
+
+tiff(filename="Output_plots/Figure3D_413701TT_chr19_allelic_disbalance.tiff", width=9, height=6, res=300, units='cm')
+(ggplot(df_for_plot, aes(x=Pos, y=Value))
+  +geom_point(size=0.5)
+  +geom_vline(xintercept = mut_pos,col="red", size=1)
+  +theme_bw()
+  +facet_grid(rows = vars(factor(Type, levels=c("vaf","Cov,log"))), scale="free_y",switch = "y")
+  +force_panelsizes(rows = c(1, 0.6))+ylab("") 
+  +theme(panel.spacing.y = unit(0, "mm"),strip.background = element_rect(size = 0.5))
+  +ggtitle("*POLD1* L474P Hypermutated colon cancer")
+  +theme(legend.position='none')
+  +theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10),plot.title = element_markdown(size=8))
+  +theme(plot.margin = margin(0.2, 0.5, 0.5, 0.5, "cm"))
+  +xlab("Chr19 position"))
+dev.off()
+
+
+#Figure 3F- mutations rate vs replication timing
+
+df = read.table("Input_files/100kb_windows_pold_S478N_context_CtoA_TCT.txt")
+colnames(df) = c("chr", "start", "end", "id", "N_mut")
+df$Type = "wt/S478N"
+df1 = read.table("Input_files/100kb_windows_pold_S478N_hypermutable_context_CtoA_TCT.txt")
+colnames(df1) = c("chr", "start", "end", "id", "N_mut")
+df1$Type = "S478N/S478N"
+df_sites = read.table("Input_files/100kb_windows_TCT_AGA_sites.txt")
+colnames(df_sites) = c("id", "sites")
+df = merge(df, df_sites, by="id")
+df$sites_all = df$sites * 32
+df1 = merge(df1, df_sites, by="id")
+df1$sites_all = df$sites * 1
+result = rbind(df, df1)
+
+df_rt = read.table("Input_files/HeLa-S3_hg19_100kb_windows.bed")
+colnames(df_rt)=c("id","V2","V3","V4","V5","RT")
+quantiles_rt = quantile(df_rt$RT, probs = seq(0,1,0.02))
+quantile_bin <-function(x){
+  bin=0
+  for (i in seq(1,50)){
+    if (x > quantiles_rt[i] & x <= quantiles_rt[i+1]){
+      bin = i
+    }
+  }
+  return(bin)
+} 
+
+df_rt$rt_bin<-as.numeric(lapply(df_rt$RT, quantile_bin))
+
+result = merge(result, df_rt[,c(1,7)], by="id")
+
+x = aggregate(result[,c(5,8)], list(result$Type,result$rt_bin), FUN=sum)
+colnames(x) = c("Mut_type","rt_bin","N_mut","Sites")
+x$Nonmut = x$Sites-x$N_mut
+model <- glm(data = x,cbind(N_mut, Nonmut) ~ Mut_type+rt_bin+Mut_type*rt_bin, family="binomial")
+
+homo = x[x$Mut_type=='S478N/S478N',]
+homo = homo[homo$rt_bin >3,]
+homo$mutrate = homo$N_mut/homo$Sites
+homo$mutrate_norm = homo$mutrate/min(homo$mutrate)
+
+hetero = x[x$Mut_type=='wt/S478N',]
+hetero = hetero[hetero$rt_bin >3,]
+hetero$mutrate = hetero$N_mut/hetero$Sites
+hetero$mutrate_norm = hetero$mutrate/min(hetero$mutrate)
+
+y = rbind(homo,hetero)
+
+tiff(filename="Output_plots/Figure3F_mutrate_vs_rt_homo_hetero.tiff", width=8, height=7, res=300, units='cm')
+(ggplot(y, aes(x=rt_bin, y=mutrate_norm, group=Mut_type,col=Mut_type))
+  + geom_point()
+  + geom_smooth(method="lm",se=F) 
   + theme_bw()
-  + theme(axis.title.x = element_markdown())
-  + theme(axis.title.y = element_markdown())
-  + ylab("-PC1")+xlab("Parents *POLD1* status")
-  + scale_fill_manual(values=c("indianred3","khaki3","mediumseagreen"))
-  + scale_x_discrete(labels=c("Father" = "Father\nL474P\n(4)", "Mother" = "Mother\nL474P\n(3)", "Both wt" = "Both wt\nour data\n(1)", "Published trios" = "Both wt\npublished\n(6241)"))
-  + stat_summary(data = data1, aes(x=factor(Status,levels = levels_pold),y=-PC1), fun.data=mean_sdl, geom="pointrange", color="black",size=0.2)
-  + theme(legend.position='none')
-  + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8))
-)
-
+  + scale_color_manual(values=c("purple4","plum3"), name="POLD1")
+  + theme(legend.position = 'bottom')
+  + xlab("Late <--- Replication timing ---> Early") 
+  + ylab("Normalized TCT>TAT\nmutation rate")
+  + theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10))
+  + stat_poly_eq(aes(label = after_stat(eq.label)),label.x = 0.95, vstep=0.15, size=4)
+  +  annotate(geom="text", x=40, y=4, label=paste("p-val","<2e-16", sep=""), size=3.5)
+  )
 dev.off()
 
-#Figure 3D-F
-df = read.table("Input_files/public_trio_data.txt")
-head(df)
-colnames(df) = c("chr","coord","mut","family_id","age","dataset")
-count_mut_per_family = aggregate(mut ~ family_id, data = df[,c(3,4)], FUN = length)
-head(count_mut_per_family)
-our_data = data.frame(sample = c("IV.1","IV.2","IV.3","IV.4","IV.5","IV.6","IV.8","IV.9"), mut=c(64,62,71,61,64,88,24,50), PolD_carrier = c("mother POLD1 L474P","mother POLD1 L474P","mother POLD1 L474P","father POLD1 L474P","father POLD1 L474P","father POLD1 L474P","father POLD1 L474P", "wt parents"), nudge_x = c(3,0,2,-4,3,0,0,0),nudge_y = c(0,0,0,0,30,0,0,0))
 
-ks_pval_fathers = round(ks.test(count_mut_per_family$mut, our_data[our_data$PolD_carrier=="father POLD1 L474P",]$mut)$p.value,4)
-ks_pval_mothers = round(ks.test(count_mut_per_family$mut, our_data[our_data$PolD_carrier=="mother POLD1 L474P",]$mut)$p.value,4)
+#Figure 3G - TCGA 
 
-#plot number of mutations
-p1<-(ggplot(count_mut_per_family, aes(x=mut)) 
-     + geom_histogram(fill="grey",bins=5000,binwidth = 1,alpha=0.5) 
-     + theme_bw() 
-     + geom_point(data=our_data, aes(x = mut, y=0, col=PolD_carrier),size=2)
-     + geom_vline(xintercept = quantile(count_mut_per_family$mut, probs = seq(0,1,0.01))[91], col="black", size=0.8)
-     + xlab("N mutations per genome")
-     + ylab("")
-     + scale_color_manual(values=c("indianred3","khaki3","black"))
-     + geom_text(data = our_data,aes(label=sample, x=mut,y=30), size=3,show.legend=FALSE, nudge_x=our_data$nudge_x, nudge_y = our_data$nudge_y)
-     + geom_text(label="90th percentile", x=90,y=200, size=3,show.legend=FALSE)
-     + xlim(0,130)
-     + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = 'none')
-     + annotate("text", x=120, y=170, label= paste("p-val", ks_pval_fathers, sep="="), color = 'indianred3')
-     + annotate("text", x=120, y=130, label= paste("p-val", ks_pval_mothers, sep="="), color = 'khaki3')
-     + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8)))
+df = read.table("Input_files/Figure3G_tcga_ucec_mutrate.txt", header=T, sep="\t")
 
-#plot PC1
-normal_germline_pca = read.table("Input_files/public_germline_pca_by_type.txt", header=T)
-our_germline_pca = read.table("Input_files/our_germline_pca_by_type.txt", header=T)
-our_germline_pca$PolD_carrier = c("Father","Father","Father","Mother","Father","Mother","Mother", "wt parents")
-our_germline_pca$col = c("red","red","red","khaki3","red","khaki3","khaki3", "black")
-our_germline_pca$Sample = rownames(our_germline_pca)
-our_germline_pca$nudge = c(-0.01,0.01,0,0.01,0.03,-0.03,0.02,0)
-our_germline_pca$Sample_name = c('IV.8','IV.6','IV.5','IV.3','IV.4','IV.2','IV.1','IV.9')
-
-ks_pval_PC1_fathers = round(ks.test(normal_germline_pca$PC1, our_germline_pca[our_germline_pca$PolD_carrier=="Father",]$PC1)$p.value,4)
-ks_pval_PC1_mothers = round(ks.test(normal_germline_pca$PC1, our_germline_pca[our_germline_pca$PolD_carrier=="Mother",]$PC1)$p.value,4)
+df_aggregate = do.call(data.frame, aggregate(df$nSNV_from_vcf, by=list(df$Status_MMR, df$Status_polymerase), FUN = function(x) c(mean = mean(x), median = median(x), sd = sd(x))))
+df_aggregate=rbind(df_aggregate, c("MSS", "POLD1", 0,0,0))
+colnames(df_aggregate) = c("Status_MMR", "Status_polymerase", "Mean_mutrate","Median_mutrate", "SD_mutrate")
+df_aggregate$Median_mutrate=as.numeric(df_aggregate$Median_mutrate)
+df_aggregate$Mean_mutrate=as.numeric(df_aggregate$Mean_mutrate)
+df_aggregate$SD_mutrate=as.numeric(df_aggregate$SD_mutrate)
+df_aggregate$Median_mutrate = as.numeric(df_aggregate$Median_mutrate)
+head(df_aggregate)
 
 
-p2<-(ggplot(normal_germline_pca, aes(x=-PC1)) 
-     + geom_histogram(fill="grey",bins=100,alpha=0.5) 
-     + theme_bw() 
-     + geom_point(data=our_germline_pca, aes(x = -PC1, y = 0,col=PolD_carrier),size=2)
-     + geom_vline(xintercept = quantile(-normal_germline_pca$PC1, probs = seq(0,1,0.01))[91], col="black", size=0.8)
-     + scale_color_manual(values=c("indianred3","khaki3","black"))
-    + geom_text(data = our_germline_pca,aes(label=Sample_name, x=-PC1,y=30), size=3,show.legend=FALSE, nudge_x=our_germline_pca$nudge)
-    + geom_text(label="90th percentile", x=0.13,y=200, size=3,show.legend=FALSE)
-     + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = 'none')
-     + ylab("")
-     + annotate("text", x=0.45, y=190, label= paste("p-val=", ks_pval_PC1_fathers, sep=""),color = 'indianred3')
-     + annotate("text", x=0.45, y=150, label= paste("p-val=", ks_pval_PC1_mothers, sep=""),color='khaki3')
-     + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8)))
-
-
-#plot cosine with SBS10c
-our_germline_SBS10c_cosine = read.table("Input_files/our_germline_SBS10c_cosine.txt", header=T)
-normal_germline_SBS10c_cosine = read.table("Input_files/public_germline_SBS10c_cosine.txt", header=T)
-our_germline_SBS10c_cosine$Carrier = c("Father L474P","Father L474P","Father L474P","Mother L474P","Father L474P","Mother L474P","Mother L474P","wt parents")
-our_germline_SBS10c_cosine$Sample = rownames(our_germline_SBS10c_cosine)
-our_germline_SBS10c_cosine$nudge = c(-0.01,-0.02,0,0.01,0,0.01,-0.006,0)
-our_germline_SBS10c_cosine$Sample_name = c('IV.8','IV.6','IV.5','IV.3','IV.4','IV.2','IV.1','IV.9')
-
-ks_pval_SBS10c_cosine_fathers = round(ks.test(normal_germline_SBS10c_cosine$coef_SBS10c, our_germline_SBS10c_cosine[our_germline_SBS10c_cosine$Carrier=="Father L474P",]$coef_SBS10c)$p.value,4)
-ks_pval_SBS10c_cosine_mothers = round(ks.test(normal_germline_SBS10c_cosine$coef_SBS10c, our_germline_SBS10c_cosine[our_germline_SBS10c_cosine$Carrier=="Mother L474P",]$coef_SBS10c)$p.value,4)
-
-
-p4<-(ggplot(normal_germline_SBS10c_cosine, aes(x=coef_SBS10c)) 
-     + geom_histogram(fill="grey",bins=100,alpha=0.5) 
-     + theme_bw() 
-     + geom_point(data=our_germline_SBS10c_cosine, aes(x = coef_SBS10c, y = 0,col=Carrier),size=2)
-     + geom_vline(xintercept = quantile(normal_germline_SBS10c_cosine$coef_SBS10c, probs = seq(0,1,0.01))[91], col="black", size=0.8)
-     + scale_color_manual(values=c("indianred3","khaki3","black"),name = "Parents *POLD1* status")
-     + geom_text(data = our_germline_SBS10c_cosine,aes(label=Sample_name, x=coef_SBS10c,y=50), size=3,show.legend=FALSE, nudge_x=our_germline_SBS10c_cosine$nudge)
-     + geom_text(label="90th percentile", x=0.38,y=290, size=3,show.legend=FALSE)
-     + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), legend.position = 'bottom')
-     + theme(legend.title = element_markdown())
-     + ylab("")
-     + xlab("cosine similarity with SBS10c")
-     + annotate("text", x=0.6, y=250, label= paste("p-val", ks_pval_SBS10c_cosine_fathers, sep="="), color = 'indianred3')
-     + annotate("text", x=0.6, y=200, label= paste("p-val", ks_pval_SBS10c_cosine_mothers, sep="="), color = 'khaki3')
-     + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=10)))
-
-tiff(filename="Output_plots/Figure3D-F_germline_nmut_PC1_SBS10_by_type.tiff", width=17, height=12, res=300, units='cm')
-plot_grid(p1, p2, p4, align = "v", nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
-dev.off()
-
-#Figure 3G
-
-df_trios = read.table("Input_files/public_germline_pca_by_type.txt", header=T)
-df_trios$type = "Data"
-df_simulations = read.table("Input_files/simulations_pca_by_type_prop_pold_0.txt")
-df_simulations$type = "Simulation wt trios"
-result = rbind(df_trios, df_simulations)
-nrow(result)
-type_levels = c("Data", "Simulation wt trios")
-p1<-(ggplot(result, aes(x=-PC1, fill=factor(type, levels = type_levels)))
-     +geom_density(alpha = 0.5)
-     +theme_bw()
-     + ylim(0,3.8)
-     +scale_fill_manual(values=c("blue", "darkgrey"), name=NULL)
-     +theme(legend.position='top')
-     +theme(legend.key.size = unit(0.4, "cm"))
-     +theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8)))
-
-qq.out <- qqplot(x=-df_simulations$PC1, y=-df_trios$PC1, plot.it=FALSE)
-qq.out <- as.data.frame(qq.out)
-xylim <- range( c(qq.out$x, qq.out$y) )
-p2<-(ggplot(qq.out, aes( x= x, y = y)) 
-     + geom_point(size=0.5)
-     + geom_abline( intercept=0, slope=1)
-     + coord_fixed(ratio = 1, xlim=xylim, ylim = xylim)
-     + xlab("Simulation")
-     + ylab("Data")
-     + theme_bw()
-     + theme(axis.text=element_text(size=7),axis.title=element_text(size=8),legend.text=element_text(size=6)))
-
-jpeg(filename=paste("Output_plots/Figure3G_PC1_normal_trios_vs_simuations.tiff", sep=""), width=9, height=9, res=300, units='cm')
-p1 + annotation_custom(ggplotGrob(p2), xmin = 0, xmax = 0.7, ymin = 1.5, ymax = 3.9)
-dev.off()
-
-#Figure 3H
-
-df_trios = read.table("Input_files/simulations_pca_by_type_prop_pold_0.05.txt",header=T)
-df_trios$type = "Simulation with POLD1 mutants"
-df_simulations = read.table("Input_files/simulations_pca_by_type_prop_pold_0.txt")
-df_simulations$type = "Simulation wt trios"
-result = rbind(df_trios, df_simulations)
-nrow(result)
-type_levels = c("Simulation with POLD1 mutants", "Simulation wt trios")
-p1<-(ggplot(result, aes(x=-PC1, fill=factor(type, levels = type_levels)))
-     + geom_text(x=-0.35, y=3.8, label="5% POLD1 L474P samples", size=3)
-     + geom_density(alpha = 0.5)
-     + ylim(0,3.8)
-     + theme_bw()
-     + scale_fill_manual(values=c("blue", "darkgrey"), name=NULL)
-     + theme(legend.position='top')
-     + theme(legend.key.size = unit(0.4, "cm"))
-     + geom_segment(x = 0.4, y=1, xend = 0.27, yend = 0.3, arrow = arrow(length = unit(0.1, "cm")),lineend = c('round'),linejoin = c('round'),size=1)
-     + geom_text(label='distribution shift', x=0.4,y=1.1, size=3,show.legend=FALSE)
-     + theme(axis.text=element_text(size=9),axis.title=element_text(size=10),legend.text=element_text(size=8)))
-
-qq.out <- qqplot(x=-df_simulations$PC1, y=-df_trios$PC1, plot.it=FALSE)
-qq.out <- as.data.frame(qq.out)
-xylim <- range( c(qq.out$x, qq.out$y) )
-p2<-(ggplot(qq.out, aes( x= x, y = y)) 
-     + geom_point(size=0.5)
-     + geom_abline( intercept=0, slope=1)
-     + coord_fixed(ratio = 1, xlim=xylim, ylim = xylim)
-     + xlab("Simulation wt trios")
-     + ylab("Simulation with POLD1 mutants")
-     + theme(axis.title.y = element_markdown())
-     + theme_bw()
-     + theme(axis.text=element_text(size=7),axis.title=element_text(size=6),legend.text=element_text(size=6)))
-
-
-
-
-setwd("D:/Lab/cancer/Article_PolD_family/plots")
-jpeg(filename=paste("Figure3H_simuations_norm_vs_simulations_pold_pca_6000trios.tiff", sep=""), width=9, height=9, res=300, units='cm')
-p1 + annotation_custom(ggplotGrob(p2), xmin = 0.05, xmax = 0.7, ymin = 1.15, ymax = 4)
+tiff(filename="Output_plots/Figure3G_tcga_ucec_mutrate.tiff", width=8, height=7, res=300, units='cm')
+(ggplot(df_aggregate, aes(x=Status_polymerase, y=(Mean_mutrate/30),fill=Status_MMR))
+  +geom_bar(stat="identity", position = 'dodge')
+  +theme_bw()
+  +theme(legend.position="bottom")
+  +ylab("Tumor mutational burden (TMB)")
+  +xlab("")
+  +theme(axis.text.x = element_markdown())
+  +scale_x_discrete(labels=c("POLD1" = "*POLD1*<br>mutated", "POLE" = "*POLE*<br>mutated","wt" = "wt<br>polymerases"))
+  +scale_fill_manual(values = c("coral3","cadetblue3"),name="")
+  +theme(axis.title.x=element_blank())
+  +theme(legend.key.size = unit(0.4, "cm"))
+  +theme(legend.margin =margin(r=10,l=5,t=0,b=0))
+  +theme(plot.margin = margin(0.5, 0.5, 0.5, 0.5, "cm"))
+  +theme(axis.text=element_text(size=8),axis.title=element_text(size=10),legend.text=element_text(size=8),legend.title=element_text(size=10)))
 dev.off()
 
